@@ -1,0 +1,79 @@
+---
+import Heading from "@components/display/Heading.astro";
+import Prose from "@components/display/Prose.astro";
+import Container from "@components/layout/Container.astro";
+import Grid from "@components/layout/Grid.astro";
+import Section from "@components/layout/Section.astro";
+import Stack from "@components/layout/Stack.astro";
+
+interface Props {
+  block: {
+    eyebrow?: string;
+    heading?: string;
+    subtitle?: string;
+    columns?: "3" | "4";
+    items: Array<{
+      title?: string;
+      body?: string;
+    }>;
+  };
+}
+
+const { block } = Astro.props;
+const minWidth = block.columns === "4" ? "16rem" : "33rem";
+---
+
+<Section class="feature-grid block" colorScheme={block.colorScheme}>
+  <Container>
+    <Stack space="xl">
+      <Stack space="xs" align="start">
+        {
+          block.eyebrow && (
+            <rough-notation
+              data-type="highlight"
+              data-color="var(--color-accent)"
+            >
+              <span class="eyebrow">{block.eyebrow}</span>
+            </rough-notation>
+          )
+        }
+        {block.heading && <Heading size="5">{block.heading}</Heading>}
+        {block.subtitle && <p class="subtitle">{block.subtitle}</p>}
+      </Stack>
+
+      <Grid minItemWidth={minWidth} space="lg">
+        {
+          block.items?.map(item => (
+            <Stack space="sm" class="card" justify="start">
+              {item.title && <Heading size="2">{item.title}</Heading>}
+              {item.body && (
+                <Prose class="ml-0">
+                  <Fragment set:html={item.body} />
+                </Prose>
+              )}
+            </Stack>
+          ))
+        }
+      </Grid>
+    </Stack>
+  </Container>
+</Section>
+
+<style>
+  .feature-grid {
+    padding-block: var(--space-2xl-4xl);
+  }
+
+  .subtitle {
+    font-size: var(--font-size-2);
+    color: var(--color-foreground-secondary);
+    max-width: var(--measure-sm);
+  }
+
+  .card {
+    padding: var(--space-lg);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-md, 0.5rem);
+    background: var(--color-bg);
+  }
+</style>

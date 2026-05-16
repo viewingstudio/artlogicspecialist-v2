@@ -1,0 +1,116 @@
+---
+import Button from "@components/actions/Button.astro";
+import Heading from "@components/display/Heading.astro";
+import Prose from "@components/display/Prose.astro";
+import Cluster from "@components/layout/Cluster.astro";
+import Container from "@components/layout/Container.astro";
+import Stack from "@components/layout/Stack.astro";
+import Switcher from "@components/layout/Switcher.astro";
+import { Image } from "astro:assets";
+
+interface Props {
+  block: {
+    id?: string;
+    eyebrow?: string;
+    heading?: string;
+    subheading?: string;
+    body?: string;
+    image: string;
+    imageAlt?: string;
+    orientation?: "mediaLeft" | "mediaRight";
+    actions?: Array<{ label?: string; href?: string }>;
+  };
+}
+
+const { block } = Astro.props;
+const isReversed = block.orientation === "mediaRight";
+---
+
+<section id={block.id} class="FeatureBlock">
+  <Container>
+    <Switcher
+      space="2xl"
+      threshold="50rem"
+      class={isReversed ? "is-reversed" : ""}
+    >
+      {
+        block.image && (
+          <div class="media">
+            <Image
+              src={block.image}
+              alt={block.imageAlt || block.heading || ""}
+              inferSize
+            />
+          </div>
+        )
+      }
+
+      <Stack class="content" space="lg">
+        {
+          block.eyebrow && (
+            <span class="eyebrow">
+              <rough-notation
+                data-type="highlight"
+                data-color="var(--color-accent)"
+              >
+                <span set:html={block.eyebrow} />
+              </rough-notation>
+            </span>
+          )
+        }
+        {block.heading && <Heading size="5" set:html={block.heading} />}
+        {
+          block.subheading && (
+            <Heading
+              as="span"
+              size="2"
+              class="subheading"
+              set:html={block.subheading}
+            />
+          )
+        }
+        {
+          block.body && (
+            <Prose>
+              <Fragment set:html={block.body} />
+            </Prose>
+          )
+        }
+        {
+          block.actions && block.actions.length > 0 && (
+            <Cluster space="sm">
+              {block.actions.map(
+                action =>
+                  action.label &&
+                  action.href && (
+                    <Button href={action.href} variant="primary">
+                      {action.label}
+                    </Button>
+                  )
+              )}
+            </Cluster>
+          )
+        }
+      </Stack>
+    </Switcher>
+  </Container>
+</section>
+
+<style>
+  .FeatureBlock {
+    padding-block: var(--space-3xl);
+  }
+
+  .FeatureBlock :global(.is-reversed) {
+    flex-direction: row-reverse;
+  }
+
+  .FeatureBlock :global(.content) {
+    justify-content: center;
+  }
+
+  .subheading {
+    color: var(--color-foreground-secondary, currentColor);
+    font-family: var(--font-family-body);
+  }
+</style>

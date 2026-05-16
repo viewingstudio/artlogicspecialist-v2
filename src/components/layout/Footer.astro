@@ -1,0 +1,58 @@
+---
+import Cluster from "./Cluster.astro";
+import Container from "./Container.astro";
+import Section from "./Section.astro";
+---
+
+<Section colorScheme="dark" as="footer">
+  <Container>
+    <Cluster class="footer-inner" justify="between">
+      <p>
+        © {new Date().getFullYear()} The Artlogic Specialist • Kurt Stubbings
+      </p>
+      <Cluster as="ul" class="footer-links">
+        <li>
+          <a
+            href="https://www.linkedin.com/in/kurtstubbings"
+            target="_blank"
+            rel="noopener noreferrer">LinkedIn</a
+          >
+        </li>
+        <li>
+          <a
+            href="https://kurtstubbings.com"
+            target="_blank"
+            rel="noopener noreferrer">Personal site</a
+          >
+        </li>
+      </Cluster>
+    </Cluster>
+  </Container>
+</Section>
+
+<style>
+  footer {
+    /* margin-top: var(--space-2xl-4xl); */
+    padding-block: var(--space-xl);
+    text-align: center;
+    color: var(--color-foreground-secondary);
+    letter-spacing: var(--letter-spacing-loose);
+    font-size: var(--font-size--1);
+  }
+
+  .footer-inner {
+  }
+
+  .footer-links {
+    text-transform: uppercase;
+    a {
+      color: var(--color-foreground-secondary);
+      text-decoration: none;
+      transition: color 0.2s;
+
+      &:hover {
+        color: var(--color-foreground);
+      }
+    }
+  }
+</style>

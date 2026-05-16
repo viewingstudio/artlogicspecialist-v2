@@ -1,0 +1,31 @@
+---
+import Heading from "@components/display/Heading.astro";
+import Prose from "@components/display/Prose.astro";
+import Container from "@components/layout/Container.astro";
+import Section from "@components/layout/Section.astro";
+import Stack from "@components/layout/Stack.astro";
+import type { InferEntrySchema } from "astro:content";
+
+type Section_ = NonNullable<InferEntrySchema<"pages">["sections"]>[number];
+
+interface Props {
+  block: Extract<Section_, { type: "textBlock" }>;
+  index: number;
+}
+
+const { block, index } = Astro.props;
+const { id, heading, body } = block;
+---
+
+<Section id={id} padding="xl">
+  <Container size="prose">
+    <Stack space="lg">
+      {
+        heading && (
+          <Heading as={index === 0 ? "h1" : "h2"} size="4" set:html={heading} />
+        )
+      }
+      <Prose size="lg" set:html={body} />
+    </Stack>
+  </Container>
+</Section>

@@ -1,0 +1,138 @@
+---
+import Button from "@components/actions/Button.astro";
+import Heading from "@components/display/Heading.astro";
+import Prose from "@components/display/Prose.astro";
+import Container from "@components/layout/Container.astro";
+import Stack from "@components/layout/Stack.astro";
+import { Image } from "astro:assets";
+
+interface Props {
+  block: {
+    eyebrow?: string;
+    heading?: string;
+    body?: string;
+    image: string;
+    imageAlt?: string;
+    ctaLabel?: string;
+    ctaHref?: string;
+  };
+  index: number;
+}
+
+const { block, index } = Astro.props;
+const isFirst = index === 0;
+---
+
+<section class:list={["SplitHeroBlock", isFirst && "is-first"]}>
+  <Container bleed>
+    <div class="content">
+      <Stack space="xl">
+        <Stack space="m">
+          {
+            block.eyebrow && (
+              <span class="eyebrow">
+                <rough-notation
+                  data-type="highlight"
+                  data-color="var(--color-accent)"
+                >
+                  <span set:html={block.eyebrow} />
+                </rough-notation>
+              </span>
+            )
+          }
+          {block.heading && <Heading size="5" set:html={block.heading} />}
+        </Stack>
+        {
+          block.body && (
+            <Prose size="md">
+              <Fragment set:html={block.body} />
+            </Prose>
+          )
+        }
+        {
+          block.ctaLabel && block.ctaHref && (
+            <div class="actions">
+              <Button size="lg" variant="primary" href={block.ctaHref}>
+                {block.ctaLabel}
+              </Button>
+            </div>
+          )
+        }
+      </Stack>
+    </div>
+    <div class="image-wrapper">
+      <Image
+        src={block.image}
+        alt={block.imageAlt || ""}
+        inferSize
+        class="hero-image"
+      />
+    </div>
+  </Container>
+</section>
+
+<style>
+  .SplitHeroBlock {
+    overflow: hidden;
+  }
+
+  .SplitHeroBlock.is-first {
+    padding-block-start: var(--header-height, 4rem);
+  }
+
+  :global(.SplitHeroBlock .container) {
+    align-items: center;
+
+    @media (min-width: 768px) {
+      min-height: 100vh;
+    }
+  }
+
+  .content {
+    grid-column: content;
+    padding-block: var(--space-xl);
+    padding-inline-end: var(--container-padding);
+
+    @media (min-width: 768px) {
+      grid-column: 2 / span 5;
+      padding-block: var(--space-4xl);
+    }
+  }
+
+  .image-wrapper {
+    grid-column: full;
+    grid-row: 1;
+    height: 33vh;
+
+    @media (min-width: 768px) {
+      height: 100%;
+      grid-column: 8 / span 7;
+      grid-row: auto;
+    }
+  }
+
+  .hero-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  h1 {
+    font-size: var(--font-size-5);
+    max-width: var(--measure-heading-1);
+  }
+
+  .eyebrow {
+    text-transform: uppercase;
+    letter-spacing: var(--letter-spacing-loose);
+    font-size: var(--font-size-0);
+  }
+
+  .highlight {
+    background: linear-gradient(
+      180deg,
+      transparent 60%,
+      var(--color-accent) 60%
+    );
+  }
+</style>

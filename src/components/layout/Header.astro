@@ -1,0 +1,306 @@
+---
+import Button from "../actions/Button.astro";
+import Cluster from "./Cluster.astro";
+import Container from "./Container.astro";
+import Stack from "./Stack.astro";
+
+const navLinks = [
+  { href: "/artlogic/seo", label: "Artlogic SEO" },
+  { href: "/artlogic/website-migration", label: "Website Migration" },
+];
+---
+
+<a href="#main" class="skip-link">Skip to main content</a>
+
+<header
+  class="site-header"
+  x-data="{
+    menuOpen: false,
+    isScrolled: false,
+    init() {
+      this.syncScrollState();
+      window.addEventListener('scroll', () => this.syncScrollState(), { passive: true });
+    },
+    syncScrollState() {
+      this.isScrolled = window.scrollY > 50;
+    },
+  }"
+  :data-scrolled="isScrolled.toString()"
+>
+  <Container>
+    <div class="header-inner">
+      <a href="/" class="logo">Kurt Stubbings</a>
+
+      <Cluster space="lg" class="end">
+        <nav class="primary-nav" aria-label="Main navigation">
+          <Cluster space="lg" as="ul" role="list">
+            {
+              navLinks.map(link => (
+                <li>
+                  <a href={link.href}>{link.label}</a>
+                </li>
+              ))
+            }
+          </Cluster>
+        </nav>
+
+        <Button variant="primary" size="lg" href="/contact" class="cta"
+          >Contact</Button
+        >
+
+        <button
+          type="button"
+          class="menu-toggle"
+          aria-label="Open menu"
+          aria-controls="mobile-menu"
+          :aria-expanded="menuOpen.toString()"
+          @click="menuOpen = true"
+        >
+          <svg
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+          >
+            <path d="M4 6H20M4 12H20M4 18H20"></path>
+          </svg>
+        </button>
+      </Cluster>
+    </div>
+  </Container>
+
+  <template x-teleport="body">
+    <div
+      id="mobile-menu"
+      class="mobile-menu"
+      role="dialog"
+      aria-modal="true"
+      aria-label="Site navigation"
+      x-show="menuOpen"
+      x-cloak
+      @keydown.escape.window="menuOpen = false"
+      x-transition:enter="mobile-nav-enter"
+      x-transition:enter-start="mobile-nav-from"
+      x-transition:enter-end="mobile-nav-to"
+      x-transition:leave="mobile-nav-leave"
+      x-transition:leave-start="mobile-nav-to"
+      x-transition:leave-end="mobile-nav-from"
+    >
+      <div class="mobile-menu-inner">
+        <div class="mobile-menu-header">
+          <a href="/" class="logo">Kurt Stubbings</a>
+          <button
+            type="button"
+            class="menu-close"
+            aria-label="Close menu"
+            @click="menuOpen = false"
+          >
+            <svg
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+            >
+              <path d="M18 6L6 18M6 6l12 12"></path>
+            </svg>
+          </button>
+        </div>
+
+        <nav class="mobileMenuNav" aria-label="Main navigation">
+          <Stack as="ul" space="lg" role="list">
+            {
+              navLinks.map(link => (
+                <li class="mobileMenuNav--item">
+                  <a
+                    href={link.href}
+                    @click="menuOpen = false"
+                    set:html={link.label}
+                  />
+                </li>
+              ))
+            }
+            <li>
+              <Button size="lg" href="/contact" @click="menuOpen = false"
+                >Contact</Button
+              >
+            </li>
+          </Stack>
+        </nav>
+      </div>
+    </div>
+  </template>
+</header>
+
+<style>
+  :root {
+    --header-height: var(--space-4xl);
+  }
+  .skip-link {
+    position: absolute;
+    top: -100px;
+    left: 0;
+    background: var(--color-accent);
+    color: var(--color-black);
+    padding: var(--space-xs);
+    z-index: 101;
+    transition: top 0.2s ease-in-out;
+
+    &:focus {
+      top: 0;
+    }
+  }
+
+  .site-header {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    z-index: 100;
+    background: rgba(255, 255, 255, 0.5);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    transition: background-color 300ms ease;
+
+    &[data-scrolled="true"] {
+      background: rgba(255, 255, 255, 0.9);
+    }
+  }
+
+  .header-inner {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    height: var(--header-height, 4rem);
+  }
+
+  .logo {
+    font-family: var(--font-family-body);
+    font-size: var(--font-size-0);
+
+    color: var(--color-foreground);
+    text-decoration: none;
+    letter-spacing: var(--letter-spacing-loose);
+    text-transform: uppercase;
+  }
+
+  .primary-nav {
+    a {
+      font-family: var(--font-family-body);
+      font-size: var(--font-size-0);
+      color: var(--color-foreground);
+      text-decoration: none;
+      text-transform: uppercase;
+      letter-spacing: var(--letter-spacing-loose);
+      transition: color 0.2s;
+
+      &:hover {
+        color: var(--color-accent-hover);
+      }
+    }
+  }
+
+  .menu-toggle {
+    display: none;
+    align-items: center;
+    justify-content: center;
+    background: none;
+    border: none;
+    color: var(--color-foreground);
+    cursor: pointer;
+    padding: var(--space-2xs);
+
+    svg {
+      width: 1.5rem;
+      height: 1.5rem;
+    }
+  }
+
+  @media (--md) {
+    .primary-nav,
+    .cta {
+      display: none;
+    }
+
+    .menu-toggle {
+      display: flex;
+    }
+  }
+
+  /* Mobile menu */
+  .mobile-menu {
+    position: fixed;
+    inset: 0;
+    z-index: 200;
+    background: var(--color-bg);
+    overflow-y: auto;
+  }
+
+  .mobile-menu-inner {
+    display: flex;
+    flex-direction: column;
+    min-height: 100%;
+    padding: var(--space-sm) var(--space-md) var(--space-xl);
+  }
+
+  .mobile-menu-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    height: var(--header-height, 4rem);
+  }
+
+  .menu-close {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: none;
+    border: none;
+    color: var(--color-foreground);
+    cursor: pointer;
+    padding: var(--space-2xs);
+
+    svg {
+      width: 1.75rem;
+      height: 1.75rem;
+    }
+  }
+
+  .mobileMenuNav {
+    flex: 1;
+    padding-block: var(--space-xl);
+  }
+  .mobileMenuNav--item {
+    display: block;
+    font-family: var(--font-family-heading);
+    font-size: var(--font-size-4);
+    font-weight: var(--font-weight-normal);
+    line-height: var(--line-height-tight);
+    color: var(--color-foreground);
+    text-decoration: none;
+    transition: opacity 200ms ease;
+
+    &:hover {
+      opacity: 0.5;
+    }
+  }
+
+  /* Transitions */
+  .mobile-nav-enter,
+  .mobile-nav-leave {
+    transition:
+      transform 480ms cubic-bezier(0.16, 1, 0.3, 1),
+      opacity 380ms ease;
+  }
+
+  .mobile-nav-from {
+    transform: translateX(100%);
+    opacity: 0;
+  }
+
+  .mobile-nav-to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+</style>

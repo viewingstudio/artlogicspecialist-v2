@@ -1,0 +1,53 @@
+{
+  "name": "astro-pagescms-starter",
+  "type": "module",
+  "version": "0.0.1",
+  "scripts": {
+    "dev": "astro dev",
+    "build": "astro build",
+    "preview": "astro preview",
+    "astro": "astro"
+  },
+  "dependencies": {
+    "@astrojs/alpinejs": "^0.5.0",
+    "@astrojs/cloudflare": "^13.1.8",
+    "@astrojs/sitemap": "^3.7.2",
+    "@fontsource-variable/jost": "^5.2.8",
+    "@fontsource/libre-caslon-display": "^5.2.7",
+    "@fontsource/libre-caslon-text": "^5.2.7",
+    "@lucide/astro": "^1.8.0",
+    "@tailwindcss/vite": "^4.1.13",
+    "@unocss/astro": "^66.6.8",
+    "alpinejs": "^3.15.11",
+    "astro": "^6.1.5",
+    "astro-pagescms": "^0.1.0",
+    "lightbox3": "^1.1.0",
+    "plyr": "^3.8.4",
+    "rough-notation": "^0.5.1",
+    "sharp": "^0.34.5",
+    "tailwindcss": "^4.1.13",
+    "unist-util-visit": "^5.1.0",
+    "unocss": "^66.6.8",
+    "vanilla-cookieconsent": "^3.1.0",
+    "wrangler": "^4.82.0"
+  },
+  "devDependencies": {
+    "@csstools/postcss-color-mix-function": "^4.0.2",
+    "@csstools/postcss-global-data": "^4.0.0",
+    "astro-favicons": "^3.1.6",
+    "astro-icon": "^1.1.5",
+    "autoprefixer": "^10.4.21",
+    "eslint": "^9.35.0",
+    "gsap": "^3.13.0",
+    "postcss-custom-media": "^11.0.6",
+    "postcss-import": "^16.1.1",
+    "postcss-nested": "^7.0.2",
+    "postcss-ruler": "^2.0.0",
+    "postcss-utopia": "^1.1.0",
+    "postcss-value-parser": "^4.2.0",
+    "prettier": "^3.6.2",
+    "prettier-plugin-astro": "^0.14.1",
+    "prettier-plugin-tailwindcss": "^0.6.14",
+    "typescript": "^5.9.2"
+  }
+}

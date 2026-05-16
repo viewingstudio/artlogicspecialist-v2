@@ -1,0 +1,57 @@
+---
+import Container from "@components/layout/Container.astro";
+import Stack from "@components/layout/Stack.astro";
+import Prose from "@components/display/Prose.astro";
+import Button from "@components/actions/Button.astro";
+
+interface Props {
+  block: {
+    eyebrow?: string;
+    heading?: string;
+    body?: string;
+    ctaLabel?: string;
+    ctaHref?: string;
+  };
+}
+
+const { block } = Astro.props;
+---
+
+<section class="block content-block">
+  <Container size="prose">
+    <Stack space="l">
+      <Stack space="3xs">
+        {block.eyebrow && <span class="eyebrow">{block.eyebrow}</span>}
+        {block.heading && <h2>{block.heading}</h2>}
+      </Stack>
+      {block.body && (
+        <Prose size="md">
+          <Fragment set:html={block.body} />
+        </Prose>
+      )}
+      {block.ctaLabel && block.ctaHref && (
+        <div class="actions">
+          <Button variant="primary" href={block.ctaHref}>
+            {block.ctaLabel}
+          </Button>
+        </div>
+      )}
+    </Stack>
+  </Container>
+</section>
+
+<style>
+  .content-block {
+    padding-block: var(--space-2xl-4xl);
+  }
+
+  h2 {
+    font-size: var(--font-size-4);
+  }
+
+  .eyebrow {
+    text-transform: uppercase;
+    letter-spacing: var(--letter-spacing-loose);
+    font-size: var(--font-size-0);
+  }
+</style>

@@ -1,0 +1,101 @@
+---
+import Heading from "@components/display/Heading.astro";
+import Prose from "@components/display/Prose.astro";
+import Container from "@components/layout/Container.astro";
+import Stack from "@components/layout/Stack.astro";
+import { Image } from "astro:assets";
+
+interface Props {
+  block: {
+    eyebrow?: string;
+    heading?: string;
+    body?: string;
+    image: string;
+    imageAlt?: string;
+  };
+}
+
+const { block } = Astro.props;
+---
+
+<section class="about block">
+  <Container>
+    <div class="inner">
+      <Image
+        src={block.image}
+        alt={block.imageAlt || ""}
+        width={645}
+        height={645}
+        class="about-image"
+      />
+
+      <Stack space="xl" class="content">
+        <Stack space="3xs">
+          {block.eyebrow && <span class="eyebrow" set:html={block.eyebrow} />}
+          {block.heading && <Heading size="6" set:html={block.heading} />}
+        </Stack>
+        {
+          block.body && (
+            <Prose size="md" class="ml-0">
+              <Fragment set:html={block.body} />
+            </Prose>
+          )
+        }
+      </Stack>
+    </div>
+  </Container>
+</section>
+
+<style>
+  .about {
+    padding-block: var(--space-4xl) var(--space-2xl);
+    position: relative;
+    /* overflow: hidden; */
+  }
+
+  .inner {
+    display: grid;
+    gap: var(--space-xl);
+    position: relative;
+    /* align-items: center; */
+    justify-content: stretch;
+    align-items: stretch;
+    grid-template-columns: 1fr 2fr;
+
+    @media (--sm) {
+      grid-template-columns: 1fr;
+    }
+
+    &::before {
+      content: "";
+      background: var(--color-accent);
+      width: 100%;
+      height: 100%;
+      position: absolute;
+      top: var(--space-md-2xl);
+      left: var(--space-md-2xl);
+    }
+
+    > * {
+      position: relative;
+      z-index: 1;
+    }
+  }
+
+  .about-image {
+    position: relative;
+    z-index: 1;
+    width: 100%;
+    height: auto;
+    object-fit: cover;
+  }
+
+  .content {
+    padding-inline-start: var(--space-4xl);
+    padding-block-start: var(--space-4xl);
+    @media (--sm) {
+      padding-inline-start: var(--space-2xl);
+      padding-inline-start: var(--space-2xl);
+    }
+  }
+</style>

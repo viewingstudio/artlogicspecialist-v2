@@ -1,0 +1,320 @@
+---
+import Container from "@components/layout/Container.astro";
+import Section from "@components/layout/Section.astro";
+import type { InferEntrySchema } from "astro:content";
+
+type Section_ = NonNullable<InferEntrySchema<"pages">["sections"]>[number];
+
+interface Props {
+  block: Extract<Section_, { type: "timelineBlock" }>;
+  index: number;
+}
+
+const { block } = Astro.props;
+const { steps = [] } = block;
+---
+
+<Section class="TimelineBlock" colorScheme="dark" padding="none">
+  <Container size="wide" bleed={6}>
+    <div
+      class="tl"
+      x-data={`{
+      current: 0,
+      total: ${steps.length},
+      init() {
+        const obs = new IntersectionObserver(
+          (entries) => {
+            entries.forEach((e) => {
+              if (e.isIntersecting) this.current = +e.target.dataset.step;
+            });
+          },
+          { root: this.$refs.reel, threshold: 0.5 }
+        );
+        this.$refs.reel.querySelectorAll('[data-step]').forEach((el) => obs.observe(el));
+      },
+      prev() { this.goTo(this.current - 1); },
+      next() { this.goTo(this.current + 1); },
+      goTo(i) {
+        if (i < 0 || i >= this.total) return;
+        this.$refs.reel.querySelectorAll('[data-step]')[i]
+          ?.scrollIntoView({ behavior: 'smooth', inline: 'start', block: 'nearest' });
+      }
+    }`}
+    >
+      <div class="tl-inner" x-ref="reel">
+        <!-- Fixed left labels -->
+        <div class="tl-labels" aria-hidden="true">
+          <div class="tl-label">
+            <span class="tl-rotated">Us</span>
+          </div>
+          <div class="tl-label tl-label--mid">
+            <span>Phase</span>
+          </div>
+          <div class="tl-label">
+            <span class="tl-rotated">You</span>
+            <nav class="tl-nav">
+              <button
+                class="tl-btn"
+                @click="prev()"
+                :disabled="current === 0"
+                aria-label="Previous phase"
+              >
+                <svg
+                  width="12"
+                  height="12"
+                  viewBox="0 0 12 12"
+                  fill="none"
+                  aria-hidden="true"
+                >
+                  <path
+                    d="M8 1.5L3 6l5 4.5"
+                    stroke="currentColor"
+                    stroke-width="1.5"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"></path>
+                </svg>
+              </button>
+              <button
+                class="tl-btn"
+                @click="next()"
+                :disabled="current === total - 1"
+                aria-label="Next phase"
+              >
+                <svg
+                  width="12"
+                  height="12"
+                  viewBox="0 0 12 12"
+                  fill="none"
+                  aria-hidden="true"
+                >
+                  <path
+                    d="M4 1.5L9 6 4 10.5"
+                    stroke="currentColor"
+                    stroke-width="1.5"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"></path>
+                </svg>
+              </button>
+            </nav>
+          </div>
+        </div>
+
+        <!-- Steps -->
+        {
+          steps.map((step, i) => (
+            <article
+              class="tl-step"
+              data-step={i}
+              aria-label={`Phase ${i + 1}: ${step.title}`}
+            >
+              <div class="tl-step-top">
+                <h2 class="tl-step-title">{step.title}</h2>
+                <p class="tl-step-desc">{step.downtownDescription}</p>
+              </div>
+              <div class="tl-step-track">
+                <span class="tl-phase-num" aria-hidden="true">
+                  {i + 1}
+                </span>
+              </div>
+              <div class="tl-step-bottom">
+                <p class="tl-step-desc">{step.youDescription}</p>
+              </div>
+            </article>
+          ))
+        }
+      </div>
+    </div>
+  </Container>
+</Section>
+
+<style>
+  @layer base {
+    .TimelineBlock {
+      --tl-label-w: 5.5rem;
+      --tl-peek-w: max(5rem, 20vw);
+      --tl-track-h: 3.5rem;
+      --tl-accent: var(--color-accent);
+      --tl-bg: var(--color-bg);
+      background: var(--tl-bg);
+      overflow: hidden;
+
+      @media (--sm) {
+        --tl-label-w: 4rem;
+        --tl-peek-w: 1px;
+      }
+    }
+
+    .tl {
+      height: 28rem;
+      grid-column: content / full-end;
+
+      @media (--sm) {
+        height: 22rem;
+        grid-column: full-start / full-end;
+      }
+    }
+
+    .tl-inner {
+      height: 100%;
+      display: flex;
+      align-items: stretch;
+      overflow-x: auto;
+      overflow-y: hidden;
+      scroll-snap-type: x mandatory;
+      scroll-behavior: smooth;
+      scroll-padding-inline-start: calc(var(--tl-label-w) + var(--space-lg));
+
+      scrollbar-width: none;
+      -webkit-overflow-scrolling: touch;
+
+      &::-webkit-scrollbar {
+        display: none;
+      }
+    }
+
+    /* ── Left labels ─────────────────────────────────── */
+    .tl-labels {
+      position: sticky;
+      left: 0;
+      z-index: 10;
+      flex-shrink: 0;
+      width: var(--tl-label-w);
+      background: var(--tl-bg);
+      display: grid;
+      grid-template-rows: 1fr var(--tl-track-h) 1fr;
+      height: 100%;
+      border-inline-end: 1px solid var(--color-border);
+    }
+
+    .tl-label {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 0.625rem;
+      color: var(--color-foreground-secondary);
+      font-size: 0.625rem;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      font-weight: 500;
+    }
+
+    .tl-label--mid {
+      border-block: 1px solid var(--color-border);
+    }
+
+    .tl-rotated {
+      writing-mode: vertical-rl;
+      text-orientation: mixed;
+      transform: rotate(180deg);
+    }
+
+    .tl-nav {
+      display: flex;
+      gap: var(--space-2xs);
+      position: absolute;
+      bottom: 0;
+      left: calc(var(--tl-label-w) + var(--space-sm));
+    }
+
+    .tl-btn {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 1.75rem;
+      height: 1.75rem;
+      border-radius: 50%;
+      border: 1px solid var(--color-border);
+      background: transparent;
+      color: var(--color-foreground);
+      cursor: pointer;
+      transition: border-color 0.2s;
+
+      &:hover:not(:disabled) {
+        border-color: var(--color-border-strong);
+      }
+
+      &:disabled {
+        opacity: 0.3;
+        cursor: default;
+        pointer-events: none;
+      }
+    }
+
+    /* ── Steps ───────────────────────────────────────── */
+    .tl-step {
+      flex-shrink: 0;
+      width: calc(100vw - var(--tl-label-w) - var(--tl-peek-w));
+      max-width: 768px;
+      scroll-snap-align: start;
+      display: grid;
+      grid-template-rows: 1fr var(--tl-track-h) 1fr;
+      height: 100%;
+      transition: opacity 0.4s ease;
+
+      &:first-of-type {
+        padding-inline-start: var(--space-lg);
+      }
+    }
+
+    .tl-step-top {
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-end;
+      padding-block-end: 1rem;
+      padding-block-start: 2rem;
+    }
+
+    .tl-step-bottom {
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-start;
+      padding-block-start: 1rem;
+      padding-block-end: 2rem;
+    }
+
+    .tl-step-title {
+      font-size: clamp(1.25rem, 2.5vw, 2.25rem);
+      font-weight: 900;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      color: var(--color-foreground);
+      line-height: 1.05;
+      margin-block-end: 0.75rem;
+    }
+
+    .tl-step-desc {
+      font-size: var(--font-size--1);
+      color: var(--color-foreground-secondary);
+
+      max-width: 40ch;
+    }
+
+    /* ── Timeline track ──────────────────────────────── */
+    .tl-step-track {
+      position: relative;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='66' height='34' viewBox='0 0 66 34'%3E%3Cg fill='none' fill-rule='evenodd' stroke-linecap='square' transform='translate(0 1)'%3E%3Cline x1='.5' x2='.5' y2='32' stroke='%23A9A9A9' stroke-width='.75'/%3E%3Cline x1='1.5' x2='64.5' y1='16.5' y2='16.5' stroke='%23FFF' stroke-width='1.5'/%3E%3C/g%3E%3C/svg%3E");
+      background-repeat: repeat-x;
+      background-position: left center;
+      background-size: auto 32px;
+    }
+
+    .tl-phase-num {
+      position: absolute;
+      left: 0;
+      top: 50%;
+      transform: translateY(-50%) translateX(-50%);
+      width: 2.25rem;
+      height: 2.25rem;
+      border-radius: 50%;
+      background: var(--tl-accent);
+
+      font-size: var(--font-size--1);
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      line-height: 1;
+    }
+  }
+</style>

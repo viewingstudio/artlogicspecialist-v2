@@ -1,0 +1,227 @@
+---
+import contactImg from "@assets/uploads/contact.jpg";
+import Button from "@components/actions/Button.astro";
+import Heading from "@components/display/Heading.astro";
+import Prose from "@components/display/Prose.astro";
+import Checkbox from "@components/forms/Checkbox.astro";
+import InsetField from "@components/forms/InsetField.astro";
+import InsetSelect from "@components/forms/InsetSelect.astro";
+import Container from "@components/layout/Container.astro";
+import Grid from "@components/layout/Grid.astro";
+import Section from "@components/layout/Section.astro";
+import Stack from "@components/layout/Stack.astro";
+import Layout from "@layouts/Layout.astro";
+import { Image } from "astro:assets";
+
+export const prerender = true;
+
+const page = {
+  title: "Contact",
+  description:
+    "Book a free 45-minute consultation to talk about your Artlogic website. Help with setup, design, customisation, SEO, and more—tailored support for galleries of all sizes.",
+};
+
+const text =
+  "<p>Whether you're setting up a new Artlogic site or improving an existing one, I can help with design, customisation, content, SEO, and more.</p><p>Use the form to book a free 45-minute consultation or email me on <a href=\"mailto:kurt@artlogicspecialist.com\">kurt@artlogicspecialist.com</a>. We'll talk through where you're at, what you need, and how I can support you in building a site that really works for your gallery.</p><p>No pressure, no jargon, just honest advice and practical support.</p>";
+---
+
+<Layout title={page.title} description={page.description}>
+  <Section padding="2xl" class="contact-section">
+    <Container>
+      <Grid minItemWidth="20rem" space="2xl">
+        <Stack class="content" space="xl">
+          <Stack space="2xs" align="start">
+            <rough-notation
+              data-type="highlight"
+              data-color="var(--color-accent)"
+            >
+              <span class="eyebrow">
+                <span class="highlight">Contact</span>
+              </span>
+            </rough-notation>
+            <Heading as="h1" size="5">
+              Helping galleries get more from their Artlogic websites
+            </Heading>
+          </Stack>
+          <Prose size="md">
+            <Fragment set:html={text} />
+          </Prose>
+        </Stack>
+
+        <Stack space="lg">
+          <form
+            class="form"
+            name="contact"
+            action="https://formspree.io/f/xblolqez"
+            method="POST"
+            id="contact-form"
+          >
+            <input type="hidden" name="form-name" value="contact" />
+
+            <InsetField
+              label="Name"
+              inputId="name"
+              name="name"
+              required
+              autocomplete="name"
+            />
+
+            <InsetField
+              label="Email"
+              inputId="email"
+              name="email"
+              type="email"
+              required
+              autocomplete="email"
+            />
+
+            <Grid minItemWidth="12rem" space="m">
+              <InsetField
+                label="Gallery / Business Name"
+                inputId="businessName"
+                name="businessName"
+                autocomplete="organization"
+              />
+              <InsetField
+                label="Website URL"
+                inputId="websiteUrl"
+                name="websiteUrl"
+                autocomplete="url"
+              />
+            </Grid>
+
+            <fieldset class="form-group">
+              <legend>What do you need help with?</legend>
+
+              <Checkbox
+                name="services"
+                value="Website setup"
+                label="Website setup"
+              />
+              <Checkbox
+                name="services"
+                value="Website customisation"
+                label="Website customisation"
+              />
+              <Checkbox
+                name="services"
+                value="SEO and content strategy"
+                label="SEO and content strategy"
+              />
+              <Checkbox
+                name="services"
+                value="Training and CMS support"
+                label="Training and CMS support"
+              />
+              <Checkbox
+                name="services"
+                value="General website audit"
+                label="General website audit"
+              />
+              <Checkbox
+                name="services"
+                value="Something else"
+                label="Something else (Add details below)"
+              />
+            </fieldset>
+
+            <InsetField
+              label="How can we help?"
+              inputId="message"
+              name="message"
+              multiline
+              rows={4}
+              placeholder="Tell us about what you're looking for"
+            />
+
+            <InsetSelect
+              label="What's your budget?"
+              inputId="budget"
+              name="budget"
+              placeholder="Select a budget"
+              options={[
+                { value: "1000-5000", label: "£1,000 - £5,000" },
+                { value: "5000-10000", label: "£5,000 - £10,000" },
+                { value: "10000-plus", label: "£10,000+" },
+                { value: "not-sure", label: "I'm not sure" },
+              ]}
+            />
+
+            <div class="form-group">
+              <Button size="lg" type="submit" class="submit-button">
+                Send Message
+              </Button>
+            </div>
+          </form>
+        </Stack>
+      </Grid>
+    </Container>
+  </Section>
+
+  <Image src={contactImg} alt="Contact" class="contact-image" />
+</Layout>
+
+<style>
+  .contact-section {
+    padding-block: var(--space-4xl);
+  }
+
+  .form {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-lg);
+  }
+
+  .form-group {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-2xs);
+  }
+
+  legend {
+    font-size: var(--font-size--1);
+    color: var(--color-foreground-secondary);
+    font-weight: var(--font-weight-medium);
+  }
+
+  fieldset {
+    border: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-xs);
+  }
+
+  /* .submit-button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: var(--space-sm) var(--space-lg);
+    background: var(--button-primary-bg);
+    color: var(--button-primary-label);
+    border: 1px solid var(--button-primary-border);
+    border-radius: var(--radius-full, 9999px);
+    font-family: var(--font-family-body);
+    font-size: var(--font-size-0);
+    font-weight: var(--font-weight-medium);
+    text-transform: uppercase;
+    letter-spacing: var(--letter-spacing-loose);
+    cursor: pointer;
+    transition:
+      background-color 200ms ease,
+      border-color 200ms ease;
+  } */
+
+  .submit-button:hover {
+    /* background: var(--button-primary-hover-bg);
+    color: var(--button-primary-hover-label);
+    border-color: var(--button-primary-hover-border); */
+  }
+
+  .contact-image {
+    width: 100%;
+    height: auto;
+    display: block;
+  }
+</style>

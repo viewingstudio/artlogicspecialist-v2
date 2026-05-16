@@ -1,0 +1,233 @@
+---
+import type { HTMLAttributes } from "astro/types";
+
+interface Option {
+  value: string;
+  label: string;
+}
+
+interface Props extends Omit<HTMLAttributes<"select">, "size"> {
+  label: string;
+  inputId?: string;
+  required?: boolean;
+  error?: string;
+  size?: "sm" | "md" | "lg";
+  options: Option[];
+  placeholder?: string;
+}
+
+const {
+  label,
+  inputId,
+  required = false,
+  error,
+  size = "md",
+  options,
+  placeholder,
+  class: className,
+  value,
+  ...rest
+} = Astro.props;
+
+const initialOption =
+  options.find((o) => o.value === value) ??
+  (placeholder ? null : (options[0] ?? null));
+const initialText = initialOption?.label ?? placeholder ?? "";
+const isPlaceholder = !initialOption;
+---
+
+<div class:list={["inset-field", className]} data-size={size}>
+  <div class="inset-box" data-error={error ? "" : undefined}>
+    <span class="inset-label">{label}</span>
+    <span
+      class="inset-value"
+      data-placeholder={isPlaceholder ? "" : undefined}
+      data-value-display
+    >
+      {initialText}
+    </span>
+    <svg
+      class="inset-chevron"
+      viewBox="0 0 12 8"
+      aria-hidden="true"
+      focusable="false"
+    >
+      <path
+        d="M1 1.5 L6 6.5 L11 1.5"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="1.5"
+        stroke-linecap="round"
+        stroke-linejoin="round"></path>
+    </svg>
+    <select
+      id={inputId}
+      class="inset-input visually-hidden"
+      required={required}
+      aria-required={required ? "true" : undefined}
+      aria-invalid={error ? "true" : undefined}
+      aria-describedby={error && inputId ? `${inputId}-error` : undefined}
+      {...rest}
+    >
+      {
+        placeholder && (
+          <option value="" disabled selected={value === undefined || value === ""}>
+            {placeholder}
+          </option>
+        )
+      }
+      {
+        options.map((opt) => (
+          <option value={opt.value} selected={value === opt.value}>
+            {opt.label}
+          </option>
+        ))
+      }
+    </select>
+  </div>
+  {
+    error && (
+      <span class="inset-error" id={inputId ? `${inputId}-error` : undefined}>
+        {error}
+      </span>
+    )
+  }
+</div>
+
+<script>
+  document.querySelectorAll<HTMLElement>(".inset-field").forEach((field) => {
+    const select = field.querySelector<HTMLSelectElement>("select.inset-input");
+    const display = field.querySelector<HTMLElement>("[data-value-display]");
+    const box = field.querySelector<HTMLElement>(".inset-box");
+    if (!select || !display || !box) return;
+
+    // Clicking anywhere in the box opens the native select picker.
+    box.addEventListener("click", (event) => {
+      if (event.target === select) return;
+      if (typeof (select as any).showPicker === "function") {
+        try {
+          (select as any).showPicker();
+          return;
+        } catch {
+          // fall through to focus + click fallback
+        }
+      }
+      select.focus();
+      select.click();
+    });
+
+    select.addEventListener("change", () => {
+      const opt = select.options[select.selectedIndex];
+      display.textContent = opt?.text ?? "";
+      if (opt && opt.value === "") {
+        display.setAttribute("data-placeholder", "");
+      } else {
+        display.removeAttribute("data-placeholder");
+      }
+    });
+  });
+</script>
+
+<style>
+  @layer base {
+    .inset-field {
+      --_padding-block: var(--space-sm);
+      --_padding-inline: var(--space-xs);
+      --_label-size: var(--font-size--2);
+      --_input-size: var(--control-font-size-md);
+
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-2xs);
+    }
+
+    .inset-field[data-size="sm"] {
+      --_padding-block: var(--space-xs);
+      --_padding-inline: var(--space-xs);
+      --_input-size: var(--control-font-size-sm);
+    }
+
+    .inset-field[data-size="lg"] {
+      --_padding-block: var(--space-md);
+      --_padding-inline: var(--space-xs);
+      --_input-size: var(--control-font-size-lg);
+    }
+
+    .inset-box {
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-xs);
+      padding: var(--_padding-block) var(--_padding-inline);
+      padding-inline-end: calc(var(--_padding-inline) + 1.5em);
+      background-color: var(--input-bg);
+      border: 1px solid var(--input-border);
+      border-radius: var(--radius-sm);
+      height: 100%;
+      cursor: pointer;
+      transition: border-color 0.2s ease;
+    }
+
+    .inset-box:focus-within {
+      border-color: var(--input-border-focus);
+    }
+
+    .inset-box[data-error] {
+      border-color: var(--input-border-error);
+    }
+
+    .inset-label {
+      display: block;
+      font-size: var(--_label-size);
+      color: var(--input-label);
+      line-height: 1;
+      pointer-events: none;
+    }
+
+    .inset-value {
+      display: block;
+      font-size: var(--_input-size);
+      color: var(--input-text);
+      line-height: 1;
+      pointer-events: none;
+
+      &[data-placeholder] {
+        color: var(--input-placeholder);
+      }
+    }
+
+    .inset-chevron {
+      position: absolute;
+      right: var(--_padding-inline);
+      top: 50%;
+      transform: translateY(-50%);
+      width: 0.75em;
+      height: 0.5em;
+      color: var(--input-label);
+      pointer-events: none;
+    }
+
+    /* Native select is hidden visually but kept in the DOM for accessibility
+       and form submission. Anchored to the box so the native dropdown opens
+       in the right place when triggered. */
+    .inset-input.visually-hidden {
+      position: absolute;
+      left: 0;
+      bottom: 0;
+      width: 1px;
+      height: 1px;
+      opacity: 0;
+      pointer-events: none;
+      border: 0;
+      padding: 0;
+      margin: 0;
+    }
+
+    .inset-error {
+      display: block;
+      font-size: var(--font-size--2);
+      color: var(--input-error-text);
+      line-height: 1.2;
+    }
+  }
+</style>

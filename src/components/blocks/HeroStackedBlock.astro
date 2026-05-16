@@ -1,0 +1,101 @@
+---
+import Heading from "@components/display/Heading.astro";
+import Prose from "@components/display/Prose.astro";
+import Container from "@components/layout/Container.astro";
+import Stack from "@components/layout/Stack.astro";
+import { Image } from "astro:assets";
+
+interface Props {
+  block: {
+    id?: string;
+    eyebrow?: string;
+    title?: string;
+    body?: string;
+    image: string;
+    imageAlt?: string;
+  };
+  index: number;
+}
+
+const { block, index } = Astro.props;
+const isFirst = index === 0;
+---
+
+<section
+  id={block.id}
+  class:list={["HeroStackedBlock", isFirst && "is-first"]}
+>
+  <Container>
+    <Stack space="l">
+      {
+        block.eyebrow && (
+          <h1 class="eyebrow">
+            <rough-notation
+              data-type="highlight"
+              data-color="var(--color-accent)"
+            >
+              <span set:html={block.eyebrow} />
+            </rough-notation>
+          </h1>
+        )
+      }
+      {block.title && <Heading size="5" set:html={block.title} class="title" />}
+      {
+        block.body && (
+          <Prose size="md">
+            <Fragment set:html={block.body} />
+          </Prose>
+        )
+      }
+    </Stack>
+  </Container>
+
+  {
+    block.image && (
+      <Image
+        class="HeroStackedBlock__image"
+        src={block.image}
+        alt={block.imageAlt || block.title || ""}
+        inferSize
+      />
+    )
+  }
+</section>
+
+<style>
+  .HeroStackedBlock {
+    padding-block-start: var(--space-2xl);
+    text-align: center;
+  }
+
+  .HeroStackedBlock.is-first {
+    padding-block-start: calc(var(--space-2xl) + var(--header-height, 4rem));
+  }
+
+  .eyebrow {
+    font-size: var(--font-size-0);
+    font-family: var(--font-family-body);
+    text-transform: uppercase;
+    letter-spacing: var(--letter-spacing-loose);
+    margin-inline: auto;
+  }
+
+  .title {
+    margin-inline: auto;
+    line-height: var(--line-height-snug);
+  }
+
+  :global(.HeroStackedBlock .prose) {
+    margin-inline: auto;
+    text-align: left;
+  }
+
+  .HeroStackedBlock__image {
+    margin-block-start: var(--space-2xl);
+    margin-inline: auto;
+    width: 100vw;
+    max-height: 50vh;
+    object-fit: cover;
+    object-position: center;
+  }
+</style>

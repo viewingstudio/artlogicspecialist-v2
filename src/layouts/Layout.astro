@@ -1,0 +1,59 @@
+---
+import "plyr/dist/plyr.css";
+import "../styles/global.css";
+
+import "@fontsource-variable/jost/wght.css";
+import "@fontsource/libre-caslon-display/400.css";
+import "@fontsource/libre-caslon-text/400.css";
+import "@fontsource/libre-caslon-text/700.css";
+
+// import "../styles/layout.css";
+// import "../styles/vars.css";
+import SEO from "@components/layout/SEO.astro";
+import type { ImageMetadata } from "astro";
+import Footer from "../components/layout/Footer.astro";
+import Header from "../components/layout/Header.astro";
+
+interface Props {
+  title?: string;
+  description?: string;
+  ogImage?: ImageMetadata | string;
+}
+
+const { title, description, ogImage } = Astro.props;
+---
+
+<!doctype html>
+<html lang="en" data-color-scheme="light">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Jost:ital,wght@0,100..900;1,100..900&family=Libre+Caslon+Display&family=Libre+Caslon+Text:ital,wght@0,400;0,700;1,400&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <SEO title={title} description={description} ogImage={ogImage} />
+  </head>
+  <body class="">
+    <Header />
+    <slot />
+    <Footer />
+    <!-- <CookieConsent /> -->
+    <!-- <script>
+      if (document.querySelector("[data-plyr-provider]")) {
+        const { default: Plyr } = await import("plyr");
+        new Plyr("[data-plyr-provider]", {
+          youtube: { noCookie: true },
+        });
+      }
+    </script> -->
+
+    <script>
+      import "../scripts/rough-notation.js";
+      import "../scripts/block-image-reveal.js";
+    </script>
+  </body>
+</html>

@@ -1,0 +1,192 @@
+---
+import Button from "@components/actions/Button.astro";
+import Heading from "@components/display/Heading.astro";
+import Prose from "@components/display/Prose.astro";
+import Container from "@components/layout/Container.astro";
+import Stack from "@components/layout/Stack.astro";
+import { Image } from "astro:assets";
+
+interface Props {
+  block: {
+    id?: string;
+    eyebrow?: string;
+    heading?: string;
+    body?: string;
+    image: string;
+    imageAlt?: string;
+    orientation?: "left" | "right";
+    hideMediaOnMobile?: boolean;
+    trimTopSpace?: boolean;
+    trimBottomSpace?: boolean;
+    ctaLabel?: string;
+    ctaHref?: string;
+  };
+}
+
+const { block } = Astro.props;
+const orientation = block.orientation ?? "left";
+---
+
+<section
+  id={block.id}
+  class:list={["SplitMediaBlock", `is-media-${orientation}`]}
+  data-trim-top-space={block.trimTopSpace ? "true" : undefined}
+  data-trim-bottom-space={block.trimBottomSpace ? "true" : undefined}
+>
+  <Container bleed>
+    <div
+      class:list={["media", block.hideMediaOnMobile && "media--hide-on-mobile"]}
+    >
+      <Image
+        src={block.image}
+        alt={block.imageAlt ?? block.heading ?? ""}
+        width={1600}
+        height={1600}
+        class="media-image"
+      />
+    </div>
+    <div class="content">
+      <Stack space="xl">
+        <Stack space="m">
+          {
+            block.eyebrow && (
+              <span class="eyebrow">
+                <rough-notation
+                  data-type="highlight"
+                  data-color="var(--color-accent)"
+                >
+                  <span set:html={block.eyebrow} />
+                </rough-notation>
+              </span>
+            )
+          }
+          {
+            block.heading && (
+              <Heading as="h2" size="5" set:html={block.heading} />
+            )
+          }
+        </Stack>
+        {
+          block.body && (
+            <Prose size="md">
+              <Fragment set:html={block.body} />
+            </Prose>
+          )
+        }
+        {
+          block.ctaLabel && block.ctaHref && (
+            <div class="actions">
+              <Button variant="primary" href={block.ctaHref}>
+                {block.ctaLabel}
+              </Button>
+            </div>
+          )
+        }
+      </Stack>
+    </div>
+  </Container>
+</section>
+
+<style>
+  .SplitMediaBlock {
+    overflow: hidden;
+  }
+
+  .SplitMediaBlock[data-trim-top-space="true"] {
+    margin-block-start: 0;
+  }
+
+  .SplitMediaBlock[data-trim-bottom-space="true"] {
+    margin-block-end: 0;
+  }
+
+  :global(.SplitMediaBlock .container) {
+    align-items: stretch;
+    grid-auto-flow: dense;
+    max-height: 100vh;
+
+    @media (--sm) {
+    }
+  }
+
+  .media {
+    grid-column: full;
+
+    @media (--sm) {
+      height: 50vh;
+      max-height: 400px;
+      grid-row: 1;
+    }
+
+    @media @media (min-width: 768px) {
+      height: 100%;
+    }
+  }
+
+  .media--hide-on-mobile {
+    @media (--sm) {
+      display: none;
+    }
+  }
+
+  .media-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .content {
+    grid-column: content;
+    align-self: center;
+    padding-block: var(--space-2xl);
+
+    @media (--sm) {
+      padding-block: var(--space-xl);
+      padding-inline: var(--container-padding);
+    }
+  }
+
+  /* Media-left: image on the left, content on the right */
+  .is-media-left .media {
+    grid-column: full-start / span 7;
+
+    @media (--sm) {
+      grid-column: 1 / -1;
+    }
+  }
+  .is-media-left .content {
+    grid-column: 9 / span 4;
+
+    @media (--sm) {
+      grid-column: 1 / -1;
+    }
+    /* @media (min-width: 768px) {
+      grid-column: 8 / span 5;
+    }
+    @media (min-width: 1200px) {
+      grid-column: 9 / span 4;
+    } */
+  }
+
+  /* Media-right: image on the right, content on the left */
+  .is-media-right .media {
+    @media (min-width: 768px) {
+      grid-column: 7 / full-end;
+    }
+  }
+  .is-media-right .content {
+    @media (min-width: 768px) {
+      grid-column: 2 / span 5;
+      grid-row: 1;
+    }
+    @media (min-width: 1200px) {
+      grid-column: 2 / span 4;
+    }
+  }
+
+  .eyebrow {
+    text-transform: uppercase;
+    letter-spacing: var(--letter-spacing-loose);
+    font-size: var(--font-size-0);
+  }
+</style>
