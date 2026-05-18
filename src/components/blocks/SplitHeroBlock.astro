@@ -40,7 +40,11 @@ const isFirst = index === 0;
               </span>
             )
           }
-          {block.heading && <Heading size="5" set:html={block.heading} />}
+          {
+            block.heading && (
+              <Heading as="h1" size="5" set:html={block.heading} />
+            )
+          }
         </Stack>
         {
           block.body && (
@@ -65,6 +69,8 @@ const isFirst = index === 0;
         src={block.image}
         alt={block.imageAlt || ""}
         inferSize
+        loading={isFirst ? "eager" : "lazy"}
+        fetchpriority={isFirst ? "high" : "auto"}
         class="hero-image"
       />
     </div>

@@ -27,8 +27,8 @@ export const SITE: Site = {
   website: "https://www.artlogicspecialist.com",
   author: "Kurt Stubbings",
   seo: {
-    title: "The Artlogic Specialist | Kurt Stubbings | Designer & Developer for Art Galleries",
-    description: "Artlogic website specialist helping galleries design, customise, and grow their sites. Over 10 years' experience, including 3 years inside Artlogic's design studio.",
+    title: "Artlogic Website Specialist for Art Galleries",
+    description: "Artlogic website specialist helping galleries with design, SEO, and CMS customisation. 10+ years experience, including 3 years at Artlogic.",
     image: "https://www.artlogicspecialist.com/og-image.png",
   },
   jsonld: {

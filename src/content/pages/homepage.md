@@ -2,8 +2,8 @@
 uuid: 7090e5f2-bd6b-4b77-a198-cffa7e7aabb3
 title: Homepage
 seo:
-  title: Artlogic Website Specialist for Art Galleries | Kurt Stubbings
-  description: Artlogic website specialist helping galleries design, customise, and grow. 10+ years experience, including 3 years at Artlogic.
+  title: Artlogic Website Specialist for Art Galleries
+  description: Artlogic website specialist helping galleries with design, SEO, and CMS customisation. 10+ years experience, including 3 years at Artlogic.
 sections:
   - type: splitHeroBlock
     eyebrow: The Artlogic Specialist

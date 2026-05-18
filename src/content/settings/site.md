@@ -1,8 +1,8 @@
 ---
 siteName: The Artlogic Specialist
 tagline: Designer and developer for art galleries on Artlogic.
-defaultMetaTitle: The Artlogic Specialist | Kurt Stubbings | Designer & Developer for Art Galleries
-defaultMetaDescription: Artlogic website specialist helping galleries design, customise, and grow their sites. Over 10 years' experience, including 3 years inside Artlogic's design studio. SEO, migration, design & development, and training.
+defaultMetaTitle: Artlogic Website Specialist for Art Galleries
+defaultMetaDescription: Artlogic website specialist helping galleries with design, SEO, and CMS customisation. 10+ years experience, including 3 years at Artlogic.
 defaultOgImage: https://www.artlogicspecialist.com/og-image.png
 logoUrl: https://www.artlogicspecialist.com/logo.png
 organization:
