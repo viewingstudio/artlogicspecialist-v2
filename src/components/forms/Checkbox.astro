@@ -1,26 +1,39 @@
 ---
-import type { HTMLAttributes } from 'astro/types'
-import Stack from '@components/layout/Stack.astro'
+import Stack from "@components/layout/Stack.astro";
+import type { HTMLAttributes } from "astro/types";
 
-interface Props extends Omit<HTMLAttributes<'input'>, 'type'> {
-  label?: string
-  error?: string
-  size?: 'sm' | 'md' | 'lg'
-  labelSize?: 'sm' | 'md'
+interface Props extends Omit<HTMLAttributes<"input">, "type"> {
+  label?: string;
+  error?: string;
+  size?: "sm" | "md" | "lg";
+  labelSize?: "sm" | "md";
 }
 
-const { label, error, size = 'md', labelSize = 'md', class: className, ...rest } = Astro.props
+const {
+  label,
+  error,
+  size = "md",
+  labelSize = "md",
+  class: className,
+  ...rest
+} = Astro.props;
 ---
 
 <Stack
   space="2xs"
-  class:list={['checkbox-field', className]}
+  class:list={["checkbox-field", className]}
   data-size={size}
-  data-error={error ? '' : undefined}
+  data-error={error ? "" : undefined}
   data-label-size={labelSize}
 >
   <label class="checkbox-wrapper">
-    <input type="checkbox" class="checkbox" aria-invalid={error ? 'true' : undefined} {...rest} />
+    <input
+      type="checkbox"
+      class="checkbox"
+      aria-invalid={error ? "true" : undefined}
+      {...rest}
+    />
+    <span class="checkbox-indicator" aria-hidden="true"></span>
     <span class="checkbox-label">
       <slot name="label">{label}</slot>
     </span>
@@ -31,8 +44,9 @@ const { label, error, size = 'md', labelSize = 'md', class: className, ...rest }
 <style>
   @layer base {
     .checkbox-field {
+      --_size: ruler.fluid(20, 28);
       --label-font-size: var(--control-font-size-md);
-      &[data-label-size='sm'] {
+      &[data-label-size="sm"] {
         --label-font-size: var(--font-size--2);
       }
     }
@@ -43,11 +57,10 @@ const { label, error, size = 'md', labelSize = 'md', class: className, ...rest }
       gap: var(--space-xs);
       cursor: pointer;
       user-select: none;
+      position: relative;
     }
 
     .checkbox {
-      --_size: ruler.fluid(20, 28);
-
       appearance: none;
       -webkit-appearance: none;
       flex-shrink: 0;
@@ -64,11 +77,6 @@ const { label, error, size = 'md', labelSize = 'md', class: className, ...rest }
       &:checked {
         background-color: var(--checkbox-accent);
         border-color: var(--checkbox-accent);
-        /* prettier-ignore */
-        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 10 10'%3E%3Cpath d='M1.5 5L4 7.5L8.5 2.5' stroke='white' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round' fill='none'/%3E%3C/svg%3E");
-        background-repeat: no-repeat;
-        background-position: center;
-        background-size: 65%;
       }
 
       &:focus-visible {
@@ -98,24 +106,49 @@ const { label, error, size = 'md', labelSize = 'md', class: className, ...rest }
     }
 
     /* Error state */
-    .checkbox[aria-invalid='true'] {
+    .checkbox[aria-invalid="true"] {
       border-color: var(--input-border-error);
     }
 
+    .checkbox-indicator {
+      position: absolute;
+      left: 0;
+      top: 50%;
+      transform: translateY(-50%);
+      width: var(--_size);
+      height: var(--_size);
+      pointer-events: none;
+      background-color: var(--color-on-accent);
+      -webkit-mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 10 10'%3E%3Cpath d='M1.5 5L4 7.5L8.5 2.5' stroke='white' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round' fill='none'/%3E%3C/svg%3E");
+      mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 10 10'%3E%3Cpath d='M1.5 5L4 7.5L8.5 2.5' stroke='white' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round' fill='none'/%3E%3C/svg%3E");
+      -webkit-mask-repeat: no-repeat;
+      mask-repeat: no-repeat;
+      -webkit-mask-position: center;
+      mask-position: center;
+      -webkit-mask-size: 65%;
+      mask-size: 65%;
+      opacity: 0;
+      transition: opacity 0.15s ease;
+    }
+
+    .checkbox:checked ~ .checkbox-indicator {
+      opacity: 1;
+    }
+
     /* Size variants */
-    .checkbox-field[data-size='sm'] .checkbox {
+    .checkbox-field[data-size="sm"] {
       --_size: 0.875rem;
     }
 
-    .checkbox-field[data-size='sm'] .checkbox-label {
+    .checkbox-field[data-size="sm"] .checkbox-label {
       font-size: var(--control-font-size-sm);
     }
 
-    .checkbox-field[data-size='lg'] .checkbox {
+    .checkbox-field[data-size="lg"] {
       --_size: 1.25rem;
     }
 
-    .checkbox-field[data-size='lg'] .checkbox-label {
+    .checkbox-field[data-size="lg"] .checkbox-label {
       font-size: var(--control-font-size-lg);
     }
   }

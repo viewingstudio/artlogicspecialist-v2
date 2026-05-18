@@ -47,6 +47,11 @@ sections:
     orientation: left
     image: ../../assets/uploads/seo-split.jpg
     imageAlt: mockup of a search of 'contemporary art gallery in London' overlayed on a map
+  - type: quoteFeatureBlock
+    quote: >-
+      No question was too small, and Kurt always made sure we understood exactly what was happening at every stage.
+    attribution: James Horan, Canfas Gallery
+    authorName: James Horan
   - type: featureBlock
     heading: Let's improve your gallery's visibility
     body: >-

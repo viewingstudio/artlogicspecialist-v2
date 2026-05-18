@@ -13,8 +13,18 @@ const seoSchema = (image: SchemaContext['image']) =>
   description: z.string().optional(),
   image: image().or(z.string()).optional(),
 }).optional();
-const sectionsSchema = (image: SchemaContext['image']) =>
-  z.array(
+
+// Collections
+const pages = defineCollection({
+  loader: glob({ pattern: "**/*.{md,mdx}", base: "./src/content/pages" }),
+  schema: ({ image }) =>
+    z.object({
+  uuid: z.string().uuid().optional(),
+  title: z.string().optional(),
+  description: z.string().optional(),
+  slug: z.string().optional(),
+  seo: seoSchema(image).optional(),
+  sections: z.array(
 z.discriminatedUnion("type", [
 z.object({
   type: z.literal("imageHeroBlock"),
@@ -227,6 +237,23 @@ z.object({
   ctaHref: z.string().optional(),
 }),
 z.object({
+  type: z.literal("quoteFeatureBlock"),
+  id: z.string().optional(),
+  quote: z.string(),
+  attribution: z.string().optional(),
+  authorName: z.string().optional(),
+}),
+z.object({
+  type: z.literal("faqBlock"),
+  id: z.string().optional(),
+  heading: z.string().optional(),
+  subtitle: z.string().optional(),
+  items: z.array(z.object({
+  question: z.string(),
+  answer: z.string(),
+})).default([]),
+}),
+z.object({
   type: z.literal("carouselBlock"),
   id: z.string().optional(),
   eyebrow: z.string().optional(),
@@ -239,64 +266,7 @@ z.object({
 })).default([]),
 }),
 ])
-).default([]);
-
-// Collections
-const pages = defineCollection({
-  loader: glob({ pattern: "**/*.{md,mdx}", base: "./src/content/pages" }),
-  schema: ({ image }) =>
-    z.object({
-  uuid: z.string().uuid().optional(),
-  title: z.string().optional(),
-  description: z.string().optional(),
-  slug: z.string().optional(),
-  seo: seoSchema(image).optional(),
-  sections: sectionsSchema(image),
-}),
-});
-const clients = defineCollection({
-  loader: file("./src/content/clients.json", {
-    parser: (text) => {
-      const items = JSON.parse(text) as Array<Record<string, unknown>>;
-      return items.map((item, i) => ({ id: String(i), ...item }));
-    },
-  }),
-  schema: ({ image }) =>
-    z.object({
-  name: z.string().optional(),
-  logo: image().optional(),
-}),
-});
-const services = defineCollection({
-  loader: glob({ pattern: "**/*.{md,mdx}", base: "./src/content/services" }),
-  schema: ({ image }) =>
-    z.object({
-  uuid: z.string().uuid().optional(),
-  title: z.string().optional(),
-  description: z.string().optional(),
-  slug: z.string().optional(),
-  icon: image().or(z.string()).optional(),
-  cta: z.string().optional(),
-  order: z.number().optional(),
-  seo: seoSchema(image).optional(),
-  sections: sectionsSchema(image),
-}),
-});
-const testimonials = defineCollection({
-  loader: file("./src/content/testimonials.json", {
-    parser: (text) => {
-      const items = JSON.parse(text) as Array<Record<string, unknown>>;
-      return items.map((item, i) => ({ id: String((item as any).uuid ?? i), ...item }));
-    },
-  }),
-  schema: ({ image }) =>
-    z.object({
-  uuid: z.string().uuid().optional(),
-  quote: z.string().optional(),
-  author: z.string().optional(),
-  role: z.string().optional(),
-  logo: image().optional(),
-  logoAlt: z.string().optional(),
+).default([]),
 }),
 });
 const redirects = defineCollection({
@@ -310,6 +280,55 @@ const redirects = defineCollection({
   from: z.string(),
   to: z.string(),
   status: z.enum(["301", "302"]).default("301"),
+}),
+});
+const siteSettings = defineCollection({
+  loader: glob({ pattern: "**/*.{md,mdx}", base: "./src/content/settings" }),
+  schema: z.object({
+  siteName: z.string().optional(),
+  tagline: z.string().optional(),
+  defaultMetaTitle: z.string().optional(),
+  defaultMetaDescription: z.string().optional(),
+  defaultOgImage: z.string().optional(),
+  logoUrl: z.string().optional(),
+  organization: z.object({
+  legalName: z.string().optional(),
+  founderName: z.string().optional(),
+  founderJobTitle: z.string().optional(),
+  addressLocality: z.string().optional(),
+  addressCountry: z.string().optional(),
+  areaServed: z.string().optional(),
+}).optional(),
+  sameAs: z.array(z.object({
+  url: z.string().optional(),
+})).default([]),
+  knowsAbout: z.array(z.object({
+  term: z.string().optional(),
+})).default([]),
+}),
+});
+const services = defineCollection({
+  loader: glob({ pattern: "**/*.{md,mdx}", base: "./src/content/services" }),
+  schema: ({ image }) =>
+    z.object({
+  uuid: z.string().uuid().optional(),
+  title: z.string(),
+  slug: z.string().optional(),
+  description: z.string().optional(),
+  longDescription: z.string().optional(),
+  serviceType: z.string().optional(),
+  order: z.number().default(99),
+  linkedPageSlug: z.string().optional(),
+  cta: z.string().optional(),
+  icon: image().or(z.string()).optional(),
+  deliverables: z.array(z.object({
+  item: z.string().optional(),
+})).default([]),
+  faq: z.array(z.object({
+  question: z.string().optional(),
+  answer: z.string().optional(),
+})).default([]),
+  seo: seoSchema(image).optional(),
 }),
 });
 const caseStudies = defineCollection({
@@ -332,4 +351,4 @@ const caseStudies = defineCollection({
 }),
 });
 
-export const collections = { pages, clients, services, testimonials, redirects, caseStudies };
+export const collections = { pages, redirects, siteSettings, services, caseStudies };

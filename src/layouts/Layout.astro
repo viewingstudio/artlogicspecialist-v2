@@ -18,9 +18,21 @@ interface Props {
   title?: string;
   description?: string;
   ogImage?: ImageMetadata | string;
+  breadcrumbsSchema?: Record<string, unknown> | null;
+  faqSchema?: Record<string, unknown> | null;
+  serviceSchema?: Record<string, unknown> | null;
+  canonical?: string;
 }
 
-const { title, description, ogImage } = Astro.props;
+const {
+  title,
+  description,
+  ogImage,
+  breadcrumbsSchema = null,
+  faqSchema = null,
+  serviceSchema = null,
+  canonical,
+} = Astro.props;
 ---
 
 <!doctype html>
@@ -35,7 +47,15 @@ const { title, description, ogImage } = Astro.props;
       rel="stylesheet"
     />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-    <SEO title={title} description={description} ogImage={ogImage} />
+    <SEO
+      title={title}
+      description={description}
+      ogImage={ogImage}
+      breadcrumbsSchema={breadcrumbsSchema}
+      faqSchema={faqSchema}
+      serviceSchema={serviceSchema}
+      canonical={canonical}
+    />
   </head>
   <body class="">
     <Header />

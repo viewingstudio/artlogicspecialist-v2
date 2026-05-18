@@ -48,6 +48,11 @@ sections:
     image: ../../assets/uploads/migration.jpg
     imageAlt: mockup of page builder in Artlogic
     orientation: mediaLeft
+  - type: quoteFeatureBlock
+    quote: >-
+      Kurt brought a deep level of database expertise that gave us complete confidence throughout the entire process.
+    attribution: James Horan, Canfas Gallery
+    authorName: James Horan
   - type: splitMediaBlock
     eyebrow: Get Started
     heading: Let's make your Artlogic website launch simple

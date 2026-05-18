@@ -48,6 +48,10 @@ const bgs = Object.values(bgImages).map(m => m.default);
         {
           services.map((service, i) => {
             const bg = bgs[i % bgs.length];
+            const linked = service.data.linkedPageSlug;
+            const href = linked
+              ? `/${linked.replace(/^\/+|\/+$/g, "")}/`
+              : `/services/${service.data.slug ?? service.id.replace(/\.mdx?$/, "")}/`;
             return (
               <li class="card">
                 <div class="card-bg-wrap">
@@ -63,7 +67,7 @@ const bgs = Object.values(bgImages).map(m => m.default);
                 </div>
                 <Stack
                   as="a"
-                  href={`/services/${service.data.slug ?? service.id}`}
+                  href={href}
                   space="lg"
                   justify="center"
                   align="center"
@@ -71,29 +75,35 @@ const bgs = Object.values(bgImages).map(m => m.default);
                   class="card-inner h-full"
                   splitAfter={3}
                 >
-                  <div class="card-icon" aria-hidden="true">
-                    <Image
-                      src={service.data.icon as ImageMetadata}
-                      alt=""
-                      width={80}
-                      height={80}
-                    />
-                  </div>
+                  {service.data.icon && (
+                    <div class="card-icon" aria-hidden="true">
+                      <Image
+                        src={service.data.icon as ImageMetadata}
+                        alt=""
+                        width={80}
+                        height={80}
+                      />
+                    </div>
+                  )}
                   <Heading
                     as="h3"
                     size="2"
                     class="card-title"
                     set:html={service.data.title}
                   />
-                  <Prose class="card-desc grow">
-                    <p>{service.data.description}</p>
-                  </Prose>
-                  <Button
-                    as="span"
-                    variant="primary"
-                    class="card-cta"
-                    set:html={service.data.cta}
-                  />
+                  {service.data.description && (
+                    <Prose class="card-desc grow">
+                      <p>{service.data.description}</p>
+                    </Prose>
+                  )}
+                  {service.data.cta && (
+                    <Button
+                      as="span"
+                      variant="primary"
+                      class="card-cta"
+                      set:html={service.data.cta}
+                    />
+                  )}
                 </Stack>
               </li>
             );

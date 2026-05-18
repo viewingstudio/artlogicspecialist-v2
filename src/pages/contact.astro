@@ -1,6 +1,7 @@
 ---
 import contactImg from "@assets/uploads/contact.jpg";
 import Button from "@components/actions/Button.astro";
+import QuoteFeatureBlock from "@components/blocks/QuoteFeatureBlock.astro";
 import Heading from "@components/display/Heading.astro";
 import Prose from "@components/display/Prose.astro";
 import Checkbox from "@components/forms/Checkbox.astro";
@@ -16,9 +17,9 @@ import { Image } from "astro:assets";
 export const prerender = true;
 
 const page = {
-  title: "Contact",
+  title: "Book a Free Artlogic Consultation | The Artlogic Specialist",
   description:
-    "Book a free 45-minute consultation to talk about your Artlogic website. Help with setup, design, customisation, SEO, and more—tailored support for galleries of all sizes.",
+    "Book a free 45-minute consultation about your Artlogic website. Help with setup, design, customisation, SEO, and more—for galleries of all sizes.",
 };
 
 const text =
@@ -149,7 +150,7 @@ const text =
 
             <div class="form-group">
               <Button size="lg" type="submit" class="submit-button">
-                Send Message
+                Send
               </Button>
             </div>
           </form>
@@ -158,12 +159,27 @@ const text =
     </Container>
   </Section>
 
-  <Image src={contactImg} alt="Contact" class="contact-image" />
+  <QuoteFeatureBlock
+    block={{
+      type: "quoteFeatureBlock",
+      quote:
+        "Sharp, genuinely open to requests, and incredibly generous — both in the doing and in the explaining. He didn't just build my site; he took the time to show me how things worked, so I felt empowered throughout the process.",
+      attribution: "Florencia Trucco, Artist",
+      authorName: "Florencia Trucco",
+    }}
+    index={0}
+  />
+
+  <Image
+    src={contactImg}
+    alt="Kurt Stubbings discussing a website project with a gallery client"
+    class="contact-image"
+  />
 </Layout>
 
 <style>
   .contact-section {
-    padding-block: var(--space-4xl);
+    padding-block: calc(var(--header-height) + var(--space-xl)) var(--space-3xl);
   }
 
   .form {

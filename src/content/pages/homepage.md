@@ -2,8 +2,8 @@
 uuid: 7090e5f2-bd6b-4b77-a198-cffa7e7aabb3
 title: Homepage
 seo:
-  title: The Artlogic Specialist | Kurt Stubbings | Website Designer
-  description: Artlogic website specialist helping galleries design, customise, and grow their sites. Over 10 years' experience, including 3 years at Artlogic. Get the website your gallery deserves.
+  title: Artlogic Website Specialist for Art Galleries | Kurt Stubbings
+  description: Artlogic website specialist helping galleries design, customise, and grow. 10+ years experience, including 3 years at Artlogic.
 sections:
   - type: splitHeroBlock
     eyebrow: The Artlogic Specialist
@@ -70,6 +70,11 @@ sections:
       - title: UniCredit Art Collection
         url: https://artcollection.unicredit.eu/
         image: ../../assets/uploads/project-unicredit-art-collection.jpg
+  - type: quoteFeatureBlock
+    quote: >-
+      Kurt brought a deep level of database expertise that gave us complete confidence throughout the entire process — no question was too small, and he always made sure we understood exactly what was happening at every stage. If you're looking for someone who combines technical excellence with a client-focused approach, Kurt is your person.
+    attribution: James Horan, Canfas Gallery
+    authorName: James Horan
   - type: splitMediaBlock
     heading: Let's create a website that works for your gallery
     body: >-

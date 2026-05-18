@@ -1,6 +1,13 @@
 ---
 import BlockRenderer from "@components/blocks/BlockRenderer.astro";
 import Layout from "@layouts/Layout.astro";
+import {
+  breadcrumbListSchema,
+  buildBreadcrumbs,
+  collectFaqsFromSections,
+  faqPageSchema,
+  serviceSchema,
+} from "@lib/seo";
 import { getCollection } from "astro:content";
 
 export const prerender = true;
@@ -17,12 +24,36 @@ export async function getStaticPaths() {
 
 const { page } = Astro.props;
 const { title, description, sections, seo } = page.data;
+
+const pages = await getCollection("pages");
+const services = await getCollection("services");
+
+const pageSlug = page.data.slug ?? page.id;
+const leafTitle = seo?.title || title || page.id;
+const crumbs = buildBreadcrumbs(pageSlug, pages, Astro.site ?? Astro.url.origin, leafTitle);
+const breadcrumbsSchema = breadcrumbListSchema(crumbs);
+
+const faqs = collectFaqsFromSections(sections ?? []);
+const faqSchema = faqPageSchema(faqs);
+
+const linkedService = services.find(s => s.data.linkedPageSlug === pageSlug);
+const orgId = `${(Astro.site ?? new URL(Astro.url.origin)).toString().replace(/\/$/, "")}/#organization`;
+const builtServiceSchema = linkedService
+  ? serviceSchema(linkedService, {
+      siteUrl: Astro.site ?? Astro.url.origin,
+      orgId,
+      pageUrl: Astro.url.href,
+    })
+  : null;
 ---
 
 <Layout
   title={seo?.title || title}
   description={seo?.description || description}
   ogImage={seo?.image}
+  breadcrumbsSchema={breadcrumbsSchema}
+  faqSchema={faqSchema}
+  serviceSchema={builtServiceSchema}
 >
   <BlockRenderer sections={sections} />
 </Layout>

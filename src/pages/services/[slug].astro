@@ -1,24 +1,170 @@
 ---
-import BlockRenderer from "@components/blocks/BlockRenderer.astro";
+import Heading from "@components/display/Heading.astro";
+import Prose from "@components/display/Prose.astro";
+import Container from "@components/layout/Container.astro";
+import Section from "@components/layout/Section.astro";
+import Stack from "@components/layout/Stack.astro";
 import Layout from "@layouts/Layout.astro";
+import {
+  breadcrumbListSchema,
+  buildBreadcrumbs,
+  faqPageSchema,
+  serviceSchema,
+} from "@lib/seo";
 import { getCollection } from "astro:content";
+
+export const prerender = true;
 
 export async function getStaticPaths() {
   const services = await getCollection("services");
-  return services.map(service => ({
-    params: { slug: service.data.slug ?? service.id },
-    props: { service },
-  }));
+  return services
+    // Services that point at an existing marketing page (e.g. /artlogic/seo)
+    // don't need a duplicate at /services/...; skip them.
+    .filter(s => !s.data.linkedPageSlug)
+    .map(service => ({
+      params: { slug: service.data.slug ?? service.id.replace(/\.mdx?$/, "") },
+      props: { service },
+    }));
 }
 
 const { service } = Astro.props;
-const { title, description, sections, seo } = service.data;
+const { title, description, longDescription, deliverables, faq, seo } = service.data;
+
+const slug = service.data.slug ?? service.id.replace(/\.mdx?$/, "");
+const pathSlug = `services/${slug}`;
+const pages = await getCollection("pages");
+const crumbs = buildBreadcrumbs(pathSlug, pages, Astro.site ?? Astro.url.origin, title);
+const breadcrumbsSchema = breadcrumbListSchema(crumbs);
+
+const faqs = (faq ?? [])
+  .filter((f): f is { question: string; answer: string } =>
+    Boolean(f.question && f.answer),
+  )
+  .map(f => ({ question: f.question, answer: f.answer }));
+const faqSchema = faqPageSchema(faqs);
+
+const orgId = `${(Astro.site ?? new URL(Astro.url.origin)).toString().replace(/\/$/, "")}/#organization`;
+const builtServiceSchema = serviceSchema(service, {
+  siteUrl: Astro.site ?? Astro.url.origin,
+  orgId,
+  pageUrl: Astro.url.href,
+});
 ---
 
 <Layout
   title={seo?.title || title}
   description={seo?.description || description}
   ogImage={seo?.image}
+  breadcrumbsSchema={breadcrumbsSchema}
+  faqSchema={faqSchema}
+  serviceSchema={builtServiceSchema}
 >
-  <BlockRenderer sections={sections} />
+  <div class="header-spacer" aria-hidden="true" style="height: var(--header-height, 5rem);"></div>
+
+  <Section padding="xl">
+    <Container size="narrow">
+      <Stack space="xl">
+        <Stack space="md">
+          <Heading as="h1" size="6">{title}</Heading>
+          {description && <p class="service-lede">{description}</p>}
+        </Stack>
+
+        {longDescription && (
+          <Prose set:html={longDescription} />
+        )}
+
+        {deliverables && deliverables.length > 0 && (
+          <Stack space="md">
+            <Heading as="h2" size="3">What's included</Heading>
+            <ul class="deliverables">
+              {deliverables.filter(d => d.item).map(d => (
+                <li>{d.item}</li>
+              ))}
+            </ul>
+          </Stack>
+        )}
+
+        {faqs.length > 0 && (
+          <Stack space="md">
+            <Heading as="h2" size="3">Frequently asked questions</Heading>
+            <Stack as="dl" space="lg" class="faq-list">
+              {faqs.map(f => (
+                <details class="faq-item">
+                  <summary>
+                    <Heading as="dt" size="2" class="faq-question">
+                      {f.question}
+                    </Heading>
+                  </summary>
+                  <dd class="faq-answer"><p>{f.answer}</p></dd>
+                </details>
+              ))}
+            </Stack>
+          </Stack>
+        )}
+      </Stack>
+    </Container>
+  </Section>
 </Layout>
+
+<style>
+  .service-lede {
+    font-size: var(--font-size-1);
+    color: var(--color-secondary);
+  }
+
+  .deliverables {
+    list-style: disc;
+    padding-inline-start: 1.25em;
+  }
+
+  .deliverables li {
+    margin-block: var(--space-xs);
+  }
+
+  .faq-list {
+    width: 100%;
+  }
+
+  .faq-item {
+    border-top: 1px solid var(--color-border);
+    padding-block: var(--space-md);
+  }
+
+  .faq-item:last-child {
+    border-bottom: 1px solid var(--color-border);
+  }
+
+  summary {
+    cursor: pointer;
+    list-style: none;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: var(--space-md);
+  }
+
+  summary::-webkit-details-marker {
+    display: none;
+  }
+
+  summary::after {
+    content: "+";
+    font-size: 1.5em;
+    line-height: 1;
+    flex-shrink: 0;
+    transition: transform 0.2s var(--ease-out-cubic);
+  }
+
+  .faq-item[open] summary::after {
+    transform: rotate(45deg);
+  }
+
+  .faq-question {
+    margin: 0;
+  }
+
+  .faq-answer {
+    padding-block-start: var(--space-md);
+    margin: 0;
+  }
+</style>

@@ -322,6 +322,26 @@ components:
           - { name: body, label: Body, type: rich-text }
           - { name: ctaLabel, label: CTA label, type: string }
           - { name: ctaHref, label: CTA URL, type: string }
+      - name: quoteFeatureBlock
+        label: Quote Feature
+        fields:
+          - { name: id, label: Anchor ID, type: string }
+          - { name: quote, label: Quote, type: text, required: true }
+          - { name: attribution, label: Attribution (e.g. James Horan, Canfas Gallery), type: string }
+          - { name: authorName, label: "Author name (for SEO schema, e.g. James Horan)", type: string }
+      - name: faqBlock
+        label: FAQ
+        fields:
+          - { name: id, label: Anchor ID, type: string }
+          - { name: heading, label: Heading, type: string }
+          - { name: subtitle, label: Subtitle, type: string }
+          - name: items
+            label: Questions & answers
+            type: object
+            list: true
+            fields:
+              - { name: question, label: Question, type: string, required: true }
+              - { name: answer, label: Answer, type: rich-text, required: true }
       - name: carouselBlock
         label: Carousel
         fields:
@@ -357,53 +377,6 @@ content:
       - name: sections
         component: sections
 
-  - name: clients
-    label: Clients
-    type: file
-    path: src/content/clients.json
-    format: json
-    list: true
-    fields:
-      - { name: name, label: Name, type: string }
-      - { name: logo, label: Logo, type: image }
-
-  - name: services
-    label: Services
-    type: collection
-    path: src/content/services
-    format: yaml-frontmatter
-    filename: "{primary}.md"
-    view:
-      primary: title
-      sort: order
-      order: asc
-    fields:
-      - { name: uuid, label: UUID, type: uuid, options: {editable: false, generate: false} }
-      - { name: title, label: Title, type: string }
-      - { name: description, label: Description, type: text }
-      - { name: slug, label: URL slug (e.g. brand-strategy), type: string }
-      - { name: icon, label: Icon (SVG), type: image }
-      - { name: cta, label: CTA label, type: string }
-      - { name: order, label: Display order, type: number }
-      - name: seo
-        component: seo
-      - name: sections
-        component: sections
-
-  - name: testimonials
-    label: Testimonials
-    type: file
-    list: true
-    path: src/content/testimonials.json
-    format: json
-    fields:
-      - { name: uuid, label: UUID, type: uuid, options: {editable: false, generate: false} }
-      - { name: quote, label: Quote, type: text }
-      - { name: author, label: Author, type: string }
-      - { name: role, label: Role, type: string }
-      - { name: logo, label: Logo, type: image }
-      - { name: logoAlt, label: Logo alt text, type: string }
-
   - name: redirects
     label: Redirects
     type: file
@@ -422,6 +395,79 @@ content:
           values:
             - { value: "301", label: "301 Permanent" }
             - { value: "302", label: "302 Temporary" }
+
+  - name: site_settings
+    label: Site Settings
+    type: collection
+    path: src/content/settings
+    format: yaml-frontmatter
+    filename: site.md
+    view:
+      primary: siteName
+    fields:
+      - { name: siteName, label: Site name, type: string }
+      - { name: tagline, label: Tagline, type: string }
+      - { name: defaultMetaTitle, label: Default meta title, type: string }
+      - { name: defaultMetaDescription, label: Default meta description, type: text }
+      - { name: defaultOgImage, label: Default OG image (absolute URL or /path), type: string }
+      - { name: logoUrl, label: Logo URL (absolute), type: string }
+      - name: organization
+        label: Organisation
+        type: object
+        fields:
+          - { name: legalName, label: Legal/Brand name, type: string }
+          - { name: founderName, label: Founder name, type: string }
+          - { name: founderJobTitle, label: Founder job title, type: string }
+          - { name: addressLocality, label: "City (e.g. London)", type: string }
+          - { name: addressCountry, label: "ISO country code (e.g. GB)", type: string }
+          - { name: areaServed, label: "Area served (e.g. Worldwide)", type: string }
+      - name: sameAs
+        label: Social/profile links (sameAs)
+        type: object
+        list: true
+        fields:
+          - { name: url, label: URL, type: string }
+      - name: knowsAbout
+        label: Topical authority keywords
+        type: object
+        list: true
+        fields:
+          - { name: term, label: Term, type: string }
+
+  - name: services
+    label: Services
+    type: collection
+    path: src/content/services
+    format: yaml-frontmatter
+    filename: "{primary}.md"
+    view:
+      primary: title
+    fields:
+      - { name: uuid, label: UUID, type: uuid, options: {editable: false, generate: false} }
+      - { name: title, label: Title, type: string, required: true }
+      - { name: slug, label: URL slug (under /services/), type: string }
+      - { name: description, label: Short description (cards + OfferCatalog), type: text }
+      - { name: longDescription, label: Long description (service page body), type: rich-text }
+      - { name: serviceType, label: "Service type (e.g. SEO consulting)", type: string }
+      - { name: order, label: Sort order, type: number, default: 99 }
+      - { name: linkedPageSlug, label: "Linked page slug (e.g. artlogic/seo) if a marketing page already exists", type: string }
+      - { name: cta, label: CTA label (for service cards), type: string }
+      - { name: icon, label: Icon image, type: image }
+      - name: deliverables
+        label: Deliverables
+        type: object
+        list: true
+        fields:
+          - { name: item, label: Item, type: string }
+      - name: faq
+        label: Service-level FAQs
+        type: object
+        list: true
+        fields:
+          - { name: question, label: Question, type: string }
+          - { name: answer, label: Answer, type: text }
+      - name: seo
+        component: seo
 
   - name: case_studies
     label: Case Studies

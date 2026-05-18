@@ -32,7 +32,7 @@ const { id, heading, subtitle } = block;
           submitting: false,
           success: false,
           errorMsg: '',
-          async submit(event) {
+        async submit(event) {
             this.submitting = true;
             this.errorMsg = '';
             const form = event.target;

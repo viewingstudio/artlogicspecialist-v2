@@ -1,0 +1,94 @@
+---
+import Heading from "@components/display/Heading.astro";
+import OverlapHeading from "@components/display/OverlapHeading.astro";
+import Prose from "@components/display/Prose.astro";
+import Container from "@components/layout/Container.astro";
+import Section from "@components/layout/Section.astro";
+import Stack from "@components/layout/Stack.astro";
+import type { InferEntrySchema } from "astro:content";
+
+type Section_ = NonNullable<InferEntrySchema<"pages">["sections"]>[number];
+
+interface Props {
+  block: Extract<Section_, { type: "faqBlock" }>;
+  index: number;
+}
+
+const { block } = Astro.props;
+const { id, heading, subtitle, items } = block;
+---
+
+<Section id={id} class="FaqBlock" padding="xl">
+  <Container size="narrow">
+    <Stack space="2xl">
+      {(heading || subtitle) && (
+        <OverlapHeading heading={heading} subtitle={subtitle} />
+      )}
+      <Stack as="dl" space="lg" class="faq-list">
+        {items.map(item => (
+          <details class="faq-item">
+            <summary>
+              <Heading as="dt" size="2" class="faq-question">
+                {item.question}
+              </Heading>
+            </summary>
+            <dd class="faq-answer">
+              <Prose set:html={item.answer} />
+            </dd>
+          </details>
+        ))}
+      </Stack>
+    </Stack>
+  </Container>
+</Section>
+
+<style>
+  .FaqBlock {
+    .faq-list {
+      width: 100%;
+    }
+
+    .faq-item {
+      border-top: 1px solid var(--color-border);
+      padding-block: var(--space-md);
+    }
+
+    .faq-item:last-child {
+      border-bottom: 1px solid var(--color-border);
+    }
+
+    summary {
+      cursor: pointer;
+      list-style: none;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: var(--space-md);
+    }
+
+    summary::-webkit-details-marker {
+      display: none;
+    }
+
+    summary::after {
+      content: "+";
+      font-size: 1.5em;
+      line-height: 1;
+      flex-shrink: 0;
+      transition: transform 0.2s var(--ease-out-cubic);
+    }
+
+    .faq-item[open] summary::after {
+      transform: rotate(45deg);
+    }
+
+    .faq-question {
+      margin: 0;
+    }
+
+    .faq-answer {
+      padding-block-start: var(--space-md);
+      margin: 0;
+    }
+  }
+</style>
