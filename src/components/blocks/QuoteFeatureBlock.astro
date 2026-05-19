@@ -2,6 +2,7 @@
 import Container from "@components/layout/Container.astro";
 import Section from "@components/layout/Section.astro";
 import Stack from "@components/layout/Stack.astro";
+import { SITE } from "@config";
 import type { InferEntrySchema } from "astro:content";
 
 type Section_ = NonNullable<InferEntrySchema<"pages">["sections"]>[number];
@@ -14,14 +15,16 @@ interface Props {
 const { block } = Astro.props;
 const { id, quote, attribution, authorName } = block;
 
+const siteOrigin = (Astro.site ?? new URL(SITE.website)).toString().replace(/\/$/, "");
+const orgId = `${siteOrigin}/#organization`;
+
 // Only emit Review schema when we have a named author — Google's structured-data
-// guidelines treat anonymous reviews as ineligible for rich results. We deliberately
-// omit `itemReviewed` rather than invent a service name; the Organization schema
-// elsewhere on the page provides the entity context.
+// guidelines treat anonymous reviews as ineligible for rich results.
 const reviewSchema = quote && authorName && {
   "@context": "https://schema.org",
   "@type": "Review",
   reviewBody: quote,
+  itemReviewed: { "@id": orgId },
   author: { "@type": "Person", name: authorName },
   reviewRating: {
     "@type": "Rating",
