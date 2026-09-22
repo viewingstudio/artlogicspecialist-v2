@@ -1,4 +1,5 @@
 ---
+import { getAvailability, resolveCta } from "@lib/availability";
 import Button from "@components/actions/Button.astro";
 import Heading from "@components/display/Heading.astro";
 import Prose from "@components/display/Prose.astro";
@@ -24,6 +25,11 @@ interface Props {
 
 const { block } = Astro.props;
 const isReversed = block.orientation === "mediaRight";
+
+const availability = await getAvailability();
+const actions = (block.actions ?? []).map(action =>
+  resolveCta(availability, action)
+);
 ---
 
 <section id={block.id} class="FeatureBlock">
@@ -77,9 +83,9 @@ const isReversed = block.orientation === "mediaRight";
           )
         }
         {
-          block.actions && block.actions.length > 0 && (
+          actions.length > 0 && (
             <Cluster space="sm">
-              {block.actions.map(
+              {actions.map(
                 action =>
                   action.label &&
                   action.href && (

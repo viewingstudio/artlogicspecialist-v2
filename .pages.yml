@@ -411,6 +411,20 @@ content:
       - { name: defaultMetaDescription, label: Default meta description, type: text }
       - { name: defaultOgImage, label: Default OG image (absolute URL or /path), type: string }
       - { name: logoUrl, label: Logo URL (absolute), type: string }
+      - name: availability
+        label: Availability
+        description: "Controls the site-wide 'not accepting new work' mode. Untick to return to business as usual."
+        type: object
+        fields:
+          - { name: closed, label: Not accepting new work, type: boolean, default: false }
+          - { name: bannerText, label: Banner text, type: string }
+          - { name: reviewDate, label: "Reviewing again (e.g. early 2027) — optional", type: string }
+          - { name: ctaLabel, label: Replacement CTA label (site-wide), type: string }
+          - { name: ctaHref, label: Replacement CTA link, type: string }
+          - { name: heading, label: Contact page heading, type: string }
+          - { name: body, label: Contact page explanation, type: rich-text }
+          - { name: formNotice, label: Note shown above the form, type: string }
+          - { name: submitLabel, label: Submit button label, type: string }
       - name: organization
         label: Organisation
         type: object

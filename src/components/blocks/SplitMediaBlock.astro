@@ -1,4 +1,5 @@
 ---
+import { getAvailability, resolveCta } from "@lib/availability";
 import Button from "@components/actions/Button.astro";
 import Heading from "@components/display/Heading.astro";
 import Prose from "@components/display/Prose.astro";
@@ -25,6 +26,12 @@ interface Props {
 
 const { block } = Astro.props;
 const orientation = block.orientation ?? "left";
+
+const availability = await getAvailability();
+const cta = resolveCta(availability, {
+  label: block.ctaLabel,
+  href: block.ctaHref,
+});
 ---
 
 <section
@@ -74,10 +81,10 @@ const orientation = block.orientation ?? "left";
           )
         }
         {
-          block.ctaLabel && block.ctaHref && (
+          cta.label && cta.href && (
             <div class="actions">
-              <Button variant="primary" href={block.ctaHref}>
-                {block.ctaLabel}
+              <Button variant="primary" href={cta.href}>
+                {cta.label}
               </Button>
             </div>
           )

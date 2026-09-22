@@ -1,1 +1,26 @@
 /* Silence is golden, boyo */
+
+:root {
+  /* Height of the header bar itself. */
+  --header-bar-height: var(--space-4xl);
+
+  /*
+   * Height of the availability banner that sits above the bar inside the fixed
+   * header. Zero unless the banner is rendered; kept in sync with the banner's
+   * real height (it can wrap on narrow screens) by AvailabilityBanner.astro.
+   */
+  --announcement-height: 0rem;
+
+  /*
+   * Total height of the fixed header — what page content must clear. Consumed
+   * by SplitHeroBlock, HeroStackedBlock, BlockRenderer's .header-spacer,
+   * contact.astro and services/[slug].astro, so those all account for the
+   * banner automatically.
+   */
+  --header-height: calc(var(--header-bar-height) + var(--announcement-height));
+}
+
+/* Fallback before the script runs, and for no-JS. */
+html:has(.availability-banner) {
+  --announcement-height: 2.75rem;
+}

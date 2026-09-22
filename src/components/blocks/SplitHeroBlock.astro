@@ -1,4 +1,5 @@
 ---
+import { getAvailability, resolveCta } from "@lib/availability";
 import Button from "@components/actions/Button.astro";
 import Heading from "@components/display/Heading.astro";
 import Prose from "@components/display/Prose.astro";
@@ -21,6 +22,12 @@ interface Props {
 
 const { block, index } = Astro.props;
 const isFirst = index === 0;
+
+const availability = await getAvailability();
+const cta = resolveCta(availability, {
+  label: block.ctaLabel,
+  href: block.ctaHref,
+});
 ---
 
 <section class:list={["SplitHeroBlock", isFirst && "is-first"]}>
@@ -54,10 +61,10 @@ const isFirst = index === 0;
           )
         }
         {
-          block.ctaLabel && block.ctaHref && (
+          cta.label && cta.href && (
             <div class="actions">
-              <Button size="lg" variant="primary" href={block.ctaHref}>
-                {block.ctaLabel}
+              <Button size="lg" variant="primary" href={cta.href}>
+                {cta.label}
               </Button>
             </div>
           )

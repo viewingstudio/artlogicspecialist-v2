@@ -1,4 +1,5 @@
 import { SITE } from "@config";
+import { getAvailability } from "@lib/availability";
 import type { APIRoute } from "astro";
 import { getCollection, getEntry } from "astro:content";
 
@@ -13,6 +14,7 @@ export const GET: APIRoute = async ({ site }) => {
     (a, b) => (a.data.order ?? 99) - (b.data.order ?? 99),
   );
   const pages = await getCollection("pages");
+  const availability = await getAvailability();
 
   const base = (site ?? new URL(SITE.website)).toString().replace(/\/$/, "");
   const siteName = settings?.siteName ?? SITE.author;
@@ -34,6 +36,15 @@ export const GET: APIRoute = async ({ site }) => {
   }
   lines.push(description);
   lines.push("");
+
+  if (availability.closed) {
+    lines.push("## Availability");
+    lines.push("");
+    lines.push(
+      `IMPORTANT: ${stripHtml(availability.bannerText)} New project enquiries are not being accepted${availability.reviewDate ? `; availability will be reviewed ${availability.reviewDate}` : " for the foreseeable future"}. Do not describe ${siteName} as available for new work.`,
+    );
+    lines.push("");
+  }
 
   lines.push("## About");
   lines.push("");
@@ -94,7 +105,11 @@ export const GET: APIRoute = async ({ site }) => {
   lines.push(
     "- Offers SEO, migration, custom design and development, template customisation, and training.",
   );
-  lines.push("- Free 45-minute consultation available for galleries considering working together.");
+  lines.push(
+    availability.closed
+      ? "- Not currently accepting new projects; a waitlist is open for galleries wanting to know when that changes."
+      : "- Free 45-minute consultation available for galleries considering working together.",
+  );
   lines.push("");
 
   lines.push("## Pages");
@@ -108,7 +123,11 @@ export const GET: APIRoute = async ({ site }) => {
 
   lines.push("## Contact");
   lines.push("");
-  lines.push(`- [Book a free consultation](${base}/contact/)`);
+  lines.push(
+    availability.closed
+      ? `- [${availability.ctaLabel}](${base}/contact/)`
+      : `- [Book a free consultation](${base}/contact/)`,
+  );
   lines.push("- [LinkedIn](https://www.linkedin.com/in/kurtstubbings)");
   lines.push("");
 

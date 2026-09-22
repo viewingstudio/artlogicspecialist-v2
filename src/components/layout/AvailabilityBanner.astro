@@ -1,0 +1,87 @@
+---
+/**
+ * Site-wide notice shown while new work is closed. Rendered inside the fixed
+ * header (above the bar) by Header.astro, so it never scrolls under it.
+ *
+ * Deliberately not dismissible — setting expectations is the whole point.
+ */
+import type { Availability } from "@lib/availability";
+import Container from "./Container.astro";
+
+interface Props {
+  availability: Availability;
+}
+
+const { availability } = Astro.props;
+const { bannerText, reviewDate, ctaLabel, ctaHref } = availability;
+---
+
+<div class="availability-banner">
+  <Container>
+    <p class="availability-banner--text">
+      <span>{bannerText}</span>
+      {
+        reviewDate && (
+          <span class="availability-banner--detail">
+            Reviewing again {reviewDate}.
+          </span>
+        )
+      }
+      <a href={ctaHref}>{ctaLabel}</a>
+    </p>
+  </Container>
+</div>
+
+<script>
+  // The banner wraps on narrow screens, so measure it rather than assuming a
+  // fixed height — everything that clears the fixed header reads this value.
+  const banner = document.querySelector<HTMLElement>(".availability-banner");
+
+  if (banner) {
+    const sync = () =>
+      document.documentElement.style.setProperty(
+        "--announcement-height",
+        `${banner.offsetHeight}px`
+      );
+
+    sync();
+    new ResizeObserver(sync).observe(banner);
+  }
+</script>
+
+<style>
+  .availability-banner {
+    background: var(--color-accent);
+    color: var(--color-black);
+  }
+
+  .availability-banner--text {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    justify-content: center;
+    gap: var(--space-2xs) var(--space-xs);
+    padding-block: var(--space-2xs);
+    margin: 0;
+    font-family: var(--font-family-body);
+    font-size: var(--font-size--1);
+    text-align: center;
+  }
+
+  .availability-banner--detail {
+    color: var(--color-black);
+    opacity: 0.7;
+  }
+
+  a {
+    color: var(--color-black);
+    font-weight: var(--font-weight-medium);
+    text-transform: uppercase;
+    letter-spacing: var(--letter-spacing-loose);
+    text-underline-offset: 0.25em;
+
+    &:hover {
+      text-decoration: none;
+    }
+  }
+</style>

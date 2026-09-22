@@ -291,6 +291,17 @@ const siteSettings = defineCollection({
   defaultMetaDescription: z.string().optional(),
   defaultOgImage: z.string().optional(),
   logoUrl: z.string().optional(),
+  availability: z.object({
+  closed: z.boolean().default(false),
+  bannerText: z.string().optional(),
+  reviewDate: z.string().optional(),
+  ctaLabel: z.string().optional(),
+  ctaHref: z.string().optional(),
+  heading: z.string().optional(),
+  body: z.string().optional(),
+  formNotice: z.string().optional(),
+  submitLabel: z.string().optional(),
+}).optional(),
   organization: z.object({
   legalName: z.string().optional(),
   founderName: z.string().optional(),

@@ -2,6 +2,7 @@
 import Container from "@components/layout/Container.astro";
 import Stack from "@components/layout/Stack.astro";
 import Prose from "@components/display/Prose.astro";
+import { getAvailability, resolveCta } from "@lib/availability";
 import Button from "@components/actions/Button.astro";
 
 interface Props {
@@ -15,6 +16,12 @@ interface Props {
 }
 
 const { block } = Astro.props;
+
+const availability = await getAvailability();
+const cta = resolveCta(availability, {
+  label: block.ctaLabel,
+  href: block.ctaHref,
+});
 ---
 
 <section class="block content-block">
@@ -29,10 +36,10 @@ const { block } = Astro.props;
           <Fragment set:html={block.body} />
         </Prose>
       )}
-      {block.ctaLabel && block.ctaHref && (
+      {cta.label && cta.href && (
         <div class="actions">
-          <Button variant="primary" href={block.ctaHref}>
-            {block.ctaLabel}
+          <Button variant="primary" href={cta.href}>
+            {cta.label}
           </Button>
         </div>
       )}

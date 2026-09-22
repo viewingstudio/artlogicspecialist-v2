@@ -1,5 +1,7 @@
 ---
+import { getAvailability, resolveCta } from "@lib/availability";
 import Button from "../actions/Button.astro";
+import AvailabilityBanner from "./AvailabilityBanner.astro";
 import Cluster from "./Cluster.astro";
 import Container from "./Container.astro";
 import Stack from "./Stack.astro";
@@ -8,6 +10,12 @@ const navLinks = [
   { href: "/artlogic/seo", label: "Artlogic SEO" },
   { href: "/artlogic/website-migration", label: "Website Migration" },
 ];
+
+const availability = await getAvailability();
+const contactCta = resolveCta(availability, {
+  label: "Contact",
+  href: "/contact",
+});
 ---
 
 <a href="#main" class="skip-link">Skip to main content</a>
@@ -27,6 +35,8 @@ const navLinks = [
   }"
   :data-scrolled="isScrolled.toString()"
 >
+  {availability.closed && <AvailabilityBanner availability={availability} />}
+
   <Container>
     <div class="header-inner">
       <a href="/" class="logo">Kurt Stubbings</a>
@@ -44,8 +54,11 @@ const navLinks = [
           </Cluster>
         </nav>
 
-        <Button variant="primary" size="lg" href="/contact" class="cta"
-          >Contact</Button
+        <Button
+          variant="primary"
+          size="lg"
+          href={contactCta.href}
+          class="cta">{contactCta.label}</Button
         >
 
         <button
@@ -122,8 +135,10 @@ const navLinks = [
               ))
             }
             <li>
-              <Button size="lg" href="/contact" @click="menuOpen = false"
-                >Contact</Button
+              <Button
+                size="lg"
+                href={contactCta.href}
+                @click="menuOpen = false">{contactCta.label}</Button
               >
             </li>
           </Stack>
@@ -134,10 +149,7 @@ const navLinks = [
 </header>
 
 <style>
-  :root {
-    --header-height: var(--space-4xl);
-  }
-  .skip-link {
+    .skip-link {
     position: absolute;
     top: -100px;
     left: 0;
@@ -172,7 +184,7 @@ const navLinks = [
     display: flex;
     align-items: center;
     justify-content: space-between;
-    height: var(--header-height, 4rem);
+    height: var(--header-bar-height, 4rem);
   }
 
   .logo {
@@ -248,7 +260,7 @@ const navLinks = [
     display: flex;
     align-items: center;
     justify-content: space-between;
-    height: var(--header-height, 4rem);
+    height: var(--header-bar-height, 4rem);
   }
 
   .menu-close {
