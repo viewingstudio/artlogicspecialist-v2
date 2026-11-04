@@ -1,6 +1,13 @@
 {
   "name": "astro-pagescms-starter",
   "type": "module",
+  "pnpm": {
+    "onlyBuiltDependencies": [
+      "esbuild",
+      "sharp",
+      "workerd"
+    ]
+  },
   "version": "0.0.1",
   "scripts": {
     "dev": "astro dev",
